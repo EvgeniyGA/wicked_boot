@@ -1,23 +1,12 @@
-add_library(mcuboot_config INTERFACE)
-target_include_directories(mcuboot_config SYSTEM INTERFACE
-    include
-)
-
-
 add_library(mcuboot_support STATIC 
-    src/flash_map.c
-    include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/flash_map.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_include_directories(mcuboot_support PUBLIC 
-    include
-    include/mcuboot_config
-    include/sysflash
-    include/flash_map_backend
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(mcuboot_support PUBLIC 
-    bootutil
-    mcuboot_config
-)
-
+#target_link_libraries(mcuboot_support PUBLIC 
+#    bootutil
+#)
