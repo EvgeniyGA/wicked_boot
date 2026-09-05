@@ -45,6 +45,10 @@ add_subdirectory(modules)
 add_subdirectory(support)
 add_subdirectory(app)
 
+target_include_directories(bootutil PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/mcuboot_support
+)
+
 target_link_libraries(${MAIN_EXECUTABLE} 
     freertos_kernel
     freertos_support
