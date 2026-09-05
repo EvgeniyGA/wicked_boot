@@ -11,100 +11,27 @@
 #ifndef __SYSFLASH_H__
 #define __SYSFLASH_H__
 
-#include "flash_layout.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#if (MCUBOOT_IMAGE_NUMBER == 1)
-/*
- * NOTE: the definition below returns the same values for true/false on
- * purpose, to avoid having to mark x as non-used by all callers when
- * running in single image mode.
- */
-#define FLASH_AREA_IMAGE_PRIMARY(x)     (((x) == 0) ? FLASH_AREA_0_ID : \
-                                                      FLASH_AREA_0_ID)
-#define FLASH_AREA_IMAGE_SECONDARY(x)   (((x) == 0) ? FLASH_AREA_2_ID : \
-                                                      FLASH_AREA_2_ID)
-#elif (MCUBOOT_IMAGE_NUMBER == 2)
-/* MCUBoot currently supports only up to 2 updatable firmware images.
- * If the number of the current image is greater than MCUBOOT_IMAGE_NUMBER - 1
- * then a dummy value will be assigned to the flash area macros.
- */
-#if (MCUBOOT_APP_IMAGE_NUMBER == 2) && (MCUBOOT_S_DATA_IMAGE_NUMBER == 0) && (MCUBOOT_NS_DATA_IMAGE_NUMBER == 0)
-#define FLASH_AREA_IMAGE_PRIMARY(x)     (((x) == 0) ? FLASH_AREA_0_ID : \
-                                         ((x) == 1) ? FLASH_AREA_1_ID : \
-                                                      255 )
-#define FLASH_AREA_IMAGE_SECONDARY(x)   (((x) == 0) ? FLASH_AREA_2_ID : \
-                                         ((x) == 1) ? FLASH_AREA_3_ID : \
-                                                      255 )
-#elif (MCUBOOT_APP_IMAGE_NUMBER == 1) && (MCUBOOT_S_DATA_IMAGE_NUMBER == 1) && (MCUBOOT_NS_DATA_IMAGE_NUMBER == 0)
-#define FLASH_AREA_IMAGE_PRIMARY(x)     (((x) == 0) ? FLASH_AREA_0_ID : \
-                                         ((x) == 1) ? FLASH_AREA_4_ID : \
-                                                      255 )
-#define FLASH_AREA_IMAGE_SECONDARY(x)   (((x) == 0) ? FLASH_AREA_2_ID : \
-                                         ((x) == 1) ? FLASH_AREA_6_ID : \
-                                                      255 )
-#elif (MCUBOOT_APP_IMAGE_NUMBER == 1) && (MCUBOOT_S_DATA_IMAGE_NUMBER == 0) && (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
-#define FLASH_AREA_IMAGE_PRIMARY(x)     (((x) == 0) ? FLASH_AREA_0_ID : \
-                                         ((x) == 1) ? FLASH_AREA_5_ID : \
-                                                      255 )
-#define FLASH_AREA_IMAGE_SECONDARY(x)   (((x) == 0) ? FLASH_AREA_2_ID : \
-                                         ((x) == 1) ? FLASH_AREA_7_ID : \
-                                                      255 )
-#else
-#error "Images number configuration not supported"
-#endif
+# define FLASH_DEVICE_INTERNAL_FLASH 0
 
-#elif (MCUBOOT_IMAGE_NUMBER == 3)
-#if (MCUBOOT_APP_IMAGE_NUMBER == 2) && (MCUBOOT_S_DATA_IMAGE_NUMBER == 1) && (MCUBOOT_NS_DATA_IMAGE_NUMBER == 0)
-#define FLASH_AREA_IMAGE_PRIMARY(x)     (((x) == 0) ? FLASH_AREA_0_ID : \
-                                         ((x) == 1) ? FLASH_AREA_1_ID : \
-                                         ((x) == 2) ? FLASH_AREA_4_ID : \
-                                                      255 )
-#define FLASH_AREA_IMAGE_SECONDARY(x)   (((x) == 0) ? FLASH_AREA_2_ID : \
-                                         ((x) == 1) ? FLASH_AREA_3_ID : \
-                                         ((x) == 2) ? FLASH_AREA_6_ID : \
-                                                      255 )
-#elif (MCUBOOT_APP_IMAGE_NUMBER == 2) && (MCUBOOT_S_DATA_IMAGE_NUMBER == 0) && (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
-#define FLASH_AREA_IMAGE_PRIMARY(x)     (((x) == 0) ? FLASH_AREA_0_ID : \
-                                         ((x) == 1) ? FLASH_AREA_1_ID : \
-                                         ((x) == 2) ? FLASH_AREA_5_ID : \
-                                                      255 )
-#define FLASH_AREA_IMAGE_SECONDARY(x)   (((x) == 0) ? FLASH_AREA_2_ID : \
-                                         ((x) == 1) ? FLASH_AREA_3_ID : \
-                                         ((x) == 2) ? FLASH_AREA_7_ID : \
-                                                      255 )
-#elif (MCUBOOT_APP_IMAGE_NUMBER == 1) && (MCUBOOT_S_DATA_IMAGE_NUMBER == 1) && (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
-#define FLASH_AREA_IMAGE_PRIMARY(x)     (((x) == 0) ? FLASH_AREA_0_ID : \
-                                         ((x) == 1) ? FLASH_AREA_4_ID : \
-                                         ((x) == 2) ? FLASH_AREA_5_ID : \
-                                                      255 )
-#define FLASH_AREA_IMAGE_SECONDARY(x)   (((x) == 0) ? FLASH_AREA_2_ID : \
-                                         ((x) == 1) ? FLASH_AREA_6_ID : \
-                                         ((x) == 2) ? FLASH_AREA_7_ID : \
-                                                      255 )
-#else
-#error "Images number configuration not supported"
-#endif
+//! NB: MCUBoot expects this define to exist but it's only used
+//! if MCUBOOT_SWAP_USING_SCRATCH is defined
+# define FLASH_AREA_IMAGE_SCRATCH FLASH_SLOT_DOES_NOT_EXIST
 
-#elif (MCUBOOT_IMAGE_NUMBER == 4)
-#define FLASH_AREA_IMAGE_PRIMARY(x)     (((x) == 0) ? FLASH_AREA_0_ID : \
-                                         ((x) == 1) ? FLASH_AREA_1_ID : \
-                                         ((x) == 2) ? FLASH_AREA_4_ID : \
-                                         ((x) == 3) ? FLASH_AREA_5_ID : \
-                                                      255 )
-#define FLASH_AREA_IMAGE_SECONDARY(x)   (((x) == 0) ? FLASH_AREA_2_ID : \
-                                         ((x) == 1) ? FLASH_AREA_3_ID : \
-                                         ((x) == 2) ? FLASH_AREA_6_ID : \
-                                         ((x) == 3) ? FLASH_AREA_7_ID : \
-                                                      255 )
-#else
-#error "Image slot and flash area mapping is not defined"
-#endif
+//! An arbitrarily high slot ID we will use to indicate that
+//! there is not slot
+#define FLASH_SLOT_DOES_NOT_EXIST 255
 
-#define FLASH_AREA_IMAGE_SCRATCH        FLASH_AREA_SCRATCH_ID
+//! The slot we will use to track the bootloader allocation
+# define FLASH_AREA_BOOTLOADER 0
+
+//! A mapping to primary and secondary/upgrade slot
+//! given an image_index. We'll plan to use
+# define FLASH_AREA_IMAGE_PRIMARY(i) ((i == 0) ? 1 : 255)
+# define FLASH_AREA_IMAGE_SECONDARY(i) ((i == 0) ? 2 : 255)
 
 #ifdef __cplusplus
 }

@@ -21,7 +21,8 @@
 #include "status_service.h"
 
 	#include "usb_service.h"
-
+#include "bootutil/bootutil.h"
+#include "bootutil/image.h"
 
 usb_device_config_t usb_device_config;
 
@@ -49,7 +50,11 @@ void heartbit_callback(void){
 }
 
 void setup(void){
-	printf("Firmware version: %s\n", FW_VERSION_STR);
+	struct boot_rsp rsp;
+	int rv = boot_go(&rsp);
+
+	
+	/*printf("Firmware version: %s\n", FW_VERSION_STR);
 	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
 	printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
 
@@ -73,7 +78,7 @@ void setup(void){
 	usb_device_init(&usb_device_config);
 	usb_cdc_init();
 
-	vTaskStartScheduler();
+	vTaskStartScheduler();*/
 }
 
 

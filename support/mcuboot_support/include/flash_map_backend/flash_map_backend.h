@@ -16,66 +16,31 @@
 #ifndef __FLASH_MAP_BACKEND_H__
 #define __FLASH_MAP_BACKEND_H__
 
-#include "flash_map/flash_map.h"
 #include <stdint.h>
+#include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+struct flash_area {
+    uint8_t  fa_id;         /** The slot/scratch identification */
+    uint8_t  fa_device_id;  /** The device id (usually there's only one) */
+    uint16_t pad16;
+    uint32_t fa_off;        /** The flash offset from the beginning */
+    uint32_t fa_size;       /** The size of this sector */
+};
 
-/**
- * Provides abstraction of flash regions for type of use.
- *
- * System will contain a map which contains flash areas. Every
- * region will contain flash identifier, offset within flash and length.
- */
+struct flash_sector {
+    uint32_t fs_off;
+    uint32_t fs_size;
+};
 
-/*
- * Retrieve a memory-mapped flash device's base address.
- *
- * On success, the address will be stored in the value pointed to by
- * ret.
- *
- * Returns 0 on success, or an error code on failure.
- */
-int flash_device_base(uint8_t fd_id, uintptr_t *ret);
-
-int flash_area_id_from_image_slot(int slot);
+int flash_area_open(uint8_t id, const struct flash_area **area_outp);
+void flash_area_close(const struct flash_area *fa);
+int flash_area_read(const struct flash_area *fa, uint32_t off, void *dst, uint32_t len);
+int flash_area_write(const struct flash_area *fa, uint32_t off, const void *src, uint32_t len);
+int flash_area_erase(const struct flash_area *fa, uint32_t off, uint32_t len);
+size_t flash_area_align(const struct flash_area *area);
+uint8_t flash_area_erased_val(const struct flash_area *area);
+int flash_area_get_sectors(int fa_id, uint32_t *count, struct flash_sector *sectors);
 int flash_area_id_from_multi_image_slot(int image_index, int slot);
-
-/**
- * Converts the specified flash area ID to an image slot index.
- *
- * Returns image slot index (0 or 1), or -1 if ID doesn't correspond to an image
- * slot.
- */
-int flash_area_id_to_image_slot(int area_id);
-
-/**
- * Converts the specified flash area ID and image index (in multi-image setup)
- * to an image slot index.
- *
- * Returns image slot index (0 or 1), or -1 if ID doesn't correspond to an image
- * slot.
- */
-int flash_area_id_to_multi_image_slot(int image_index, int area_id);
-
-/*
- * Returns the value expected to be read when accessing any erased
- * flash byte.
- */
-uint8_t flash_area_erased_val(const struct flash_area *fap);
-
-/*
- * Reads len bytes from off, and checks if the read data is erased.
- *
- * Returns 1 if erased, 0 if non-erased, and -1 on failure.
- */
-int flash_area_read_is_empty(const struct flash_area *fa, uint32_t off,
-        void *dst, uint32_t len);
-
-#ifdef __cplusplus
-}
-#endif
+int flash_area_id_from_image_slot(int slot);
 
 #endif /* __FLASH_MAP_BACKEND_H__ */

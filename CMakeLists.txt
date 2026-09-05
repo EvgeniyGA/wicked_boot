@@ -46,7 +46,7 @@ add_subdirectory(support)
 add_subdirectory(app)
 
 target_include_directories(bootutil PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/support/mcuboot_support
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/mcuboot_support/include
 )
 
 target_link_libraries(${MAIN_EXECUTABLE} 

@@ -1,282 +1,233 @@
-/*
- * Copyright (c) 2019-2021, Arm Limited. All rights reserved.
- * Copyright (c) 2023 STMicroelectronics. All rights reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- *
- */
-
-#include <stdbool.h>
-#include "flash_map/flash_map.h"
 #include "flash_map_backend/flash_map_backend.h"
-#include "bootutil_priv.h"
-#include "bootutil/bootutil_log.h"
-#include "Driver_Flash.h"
+#include "sysflash/sysflash.h"
+#include "stm32f4xx_hal.h"
+#include <string.h>
+#include <stddef.h>
 
-/* When undefined FLASH_DEV_NAME_0 or FLASH_DEVICE_ID_0 , default */
-#if !defined(FLASH_DEV_NAME_0) || !defined(FLASH_DEVICE_ID_0)
-#define FLASH_DEV_NAME_0  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_0 FLASH_DEVICE_ID
-#endif
 
-/* When undefined FLASH_DEV_NAME_1 or FLASH_DEVICE_ID_1 , default */
-#if !defined(FLASH_DEV_NAME_1) || !defined(FLASH_DEVICE_ID_1)
-#define FLASH_DEV_NAME_1  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_1 FLASH_DEVICE_ID
-#endif
 
-/* When undefined FLASH_DEV_NAME_2 or FLASH_DEVICE_ID_2 , default */
-#if !defined(FLASH_DEV_NAME_2) || !defined(FLASH_DEVICE_ID_2)
-#define FLASH_DEV_NAME_2  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_2 FLASH_DEVICE_ID
-#endif
 
-/* When undefined FLASH_DEV_NAME_3 or FLASH_DEVICE_ID_3 , default */
-#if !defined(FLASH_DEV_NAME_3) || !defined(FLASH_DEVICE_ID_3)
-#define FLASH_DEV_NAME_3  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_3 FLASH_DEVICE_ID
-#endif
 
-/* When undefined FLASH_DEV_NAME_4 or FLASH_DEVICE_ID_4 , default */
-#if !defined(FLASH_DEV_NAME_4) || !defined(FLASH_DEVICE_ID_4)
-#define FLASH_DEV_NAME_4  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_4 FLASH_DEVICE_ID
-#endif
-
-/* When undefined FLASH_DEV_NAME_5 or FLASH_DEVICE_ID_5 , default */
-#if !defined(FLASH_DEV_NAME_5) || !defined(FLASH_DEVICE_ID_5)
-#define FLASH_DEV_NAME_5  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_5 FLASH_DEVICE_ID
-#endif
-
-/* When undefined FLASH_DEV_NAME_6 or FLASH_DEVICE_ID_6 , default */
-#if !defined(FLASH_DEV_NAME_6) || !defined(FLASH_DEVICE_ID_6)
-#define FLASH_DEV_NAME_6  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_6 FLASH_DEVICE_ID
-#endif
-
-/* When undefined FLASH_DEV_NAME_7 or FLASH_DEVICE_ID_7 , default */
-#if !defined(FLASH_DEV_NAME_7) || !defined(FLASH_DEVICE_ID_7)
-#define FLASH_DEV_NAME_7  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_7 FLASH_DEVICE_ID
-#endif
-
-/* When undefined FLASH_DEV_NAME_SCRATCH or FLASH_DEVICE_ID_SCRATCH , default */
-#if !defined(FLASH_DEV_NAME_SCRATCH) || !defined(FLASH_DEVICE_ID_SCRATCH)
-#define FLASH_DEV_NAME_SCRATCH  FLASH_DEV_NAME
-#define FLASH_DEVICE_ID_SCRATCH FLASH_DEVICE_ID
-#endif
-
-#define ARRAY_SIZE(arr) (sizeof(arr)/sizeof((arr)[0]))
-
-/* Flash device names must be specified by target */
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_0;
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_1;
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_2;
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_3;
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_4;
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_5;
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_6;
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_7;
-extern ARM_DRIVER_FLASH FLASH_DEV_NAME_SCRATCH;
-
-static const struct flash_area flash_map[] = {
-    {
-        .fa_id = FLASH_AREA_0_ID,
-        .fa_device_id = FLASH_DEVICE_ID_0,
-        .fa_driver = &FLASH_DEV_NAME_0,
-        .fa_off = FLASH_AREA_0_OFFSET,
-        .fa_size = FLASH_AREA_0_SIZE,
-    },
-#ifndef MCUBOOT_PRIMARY_ONLY
-    {
-        .fa_id = FLASH_AREA_2_ID,
-        .fa_device_id = FLASH_DEVICE_ID_2,
-        .fa_driver = &FLASH_DEV_NAME_2,
-        .fa_off = FLASH_AREA_2_OFFSET,
-        .fa_size = FLASH_AREA_2_SIZE,
-    },
-#endif
-#if (MCUBOOT_APP_IMAGE_NUMBER == 2)
-    {
-        .fa_id = FLASH_AREA_1_ID,
-        .fa_device_id = FLASH_DEVICE_ID_1,
-        .fa_driver = &FLASH_DEV_NAME_1,
-        .fa_off = FLASH_AREA_1_OFFSET,
-        .fa_size = FLASH_AREA_1_SIZE,
-    },
-#ifndef MCUBOOT_PRIMARY_ONLY
-    {
-        .fa_id = FLASH_AREA_3_ID,
-        .fa_device_id = FLASH_DEVICE_ID_3,
-        .fa_driver = &FLASH_DEV_NAME_3,
-        .fa_off = FLASH_AREA_3_OFFSET,
-        .fa_size = FLASH_AREA_3_SIZE,
-    },
-#endif
-#endif
-#if (MCUBOOT_S_DATA_IMAGE_NUMBER == 1)
-    {
-        .fa_id = FLASH_AREA_4_ID,
-        .fa_device_id = FLASH_DEVICE_ID_4,
-        .fa_driver = &FLASH_DEV_NAME_4,
-        .fa_off = FLASH_AREA_4_OFFSET,
-        .fa_size = FLASH_AREA_4_SIZE,
-    },
-#ifndef MCUBOOT_PRIMARY_ONLY
-    {
-        .fa_id = FLASH_AREA_6_ID,
-        .fa_device_id = FLASH_DEVICE_ID_6,
-        .fa_driver = &FLASH_DEV_NAME_6,
-        .fa_off = FLASH_AREA_6_OFFSET,
-        .fa_size = FLASH_AREA_6_SIZE,
-    },
-#endif
-#endif
-#if (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
-    {
-        .fa_id = FLASH_AREA_5_ID,
-        .fa_device_id = FLASH_DEVICE_ID_5,
-        .fa_driver = &FLASH_DEV_NAME_5,
-        .fa_off = FLASH_AREA_5_OFFSET,
-        .fa_size = FLASH_AREA_5_SIZE,
-    },
-#ifndef MCUBOOT_PRIMARY_ONLY
-    {
-        .fa_id = FLASH_AREA_7_ID,
-        .fa_device_id = FLASH_DEVICE_ID_7,
-        .fa_driver = &FLASH_DEV_NAME_7,
-        .fa_off = FLASH_AREA_7_OFFSET,
-        .fa_size = FLASH_AREA_7_SIZE,
-    },
-#endif
-#endif
-#ifndef MCUBOOT_PRIMARY_ONLY
-    {
-        .fa_id = FLASH_AREA_SCRATCH_ID,
-        .fa_device_id = FLASH_DEVICE_ID_SCRATCH,
-        .fa_driver = &FLASH_DEV_NAME_SCRATCH,
-        .fa_off = FLASH_AREA_SCRATCH_OFFSET,
-        .fa_size = FLASH_AREA_SCRATCH_SIZE,
-    },
-#endif
-};
-
-static const int flash_map_entry_num = ARRAY_SIZE(flash_map);
-
-/*
- * Check the target address in the flash_area_xxx operation.
- */
-static bool is_range_valid(const struct flash_area *area,
-                           uint32_t off,
-                           uint32_t len)
-{
-    uint32_t size;
-
-    if (!area) {
-        return false;
-    }
-
-    if (!boot_u32_safe_add(&size, off, len)) {
-        return false;
-    }
-
-    if (area->fa_size < size) {
-        return false;
-    }
-
-    return true;
+// -----------------------------------------------------------------------------
+// 4. Геттеры для нового API MCUboot
+// -----------------------------------------------------------------------------
+uint8_t flash_area_get_id(const struct flash_area *fa) {
+    return fa->fa_id;
 }
 
-/*
- * `open` a flash area.  The `area` in this case is not the individual
- * sectors, but describes the particular flash area in question.
- */
-int flash_area_open(uint8_t id, const struct flash_area **area)
-{
-    int i;
+uint8_t flash_area_get_device_id(const struct flash_area *fa) {
+    return fa->fa_device_id;
+}
 
-    BOOT_LOG_DBG("area %d", id);
+uint32_t flash_area_get_off(const struct flash_area *fa) {
+    return fa->fa_off;
+}
 
-    for (i = 0; i < flash_map_entry_num; i++) {
-        if (id == flash_map[i].fa_id) {
-            break;
+uint32_t flash_area_get_size(const struct flash_area *fa) {
+    return fa->fa_size;
+}
+
+uint32_t flash_sector_get_off(const struct flash_sector *fs) {
+    return fs->fs_off;
+}
+
+uint32_t flash_sector_get_size(const struct flash_sector *fs) {
+    return fs->fs_size;
+}
+// -----------------------------------------------------------------------------
+// 1. Определение областей флеш-памяти (строго по границам секторов STM32F4!)
+// Разметка для 1 МБ STM32F407:
+// Сектора 0-3: по 16 КБ (итого 64 КБ под Bootloader)
+// Сектор 4: 64 КБ (можно использовать под данные/настройки)
+// Сектор 5: 128 КБ (Primary Slot)
+// Сектор 6: 128 КБ (Secondary Slot)
+// -----------------------------------------------------------------------------
+static const struct flash_area flash_areas[] = {
+    // Bootloader: Сектора 0-3 (4 * 16КБ = 64КБ)
+    {
+        .fa_id = FLASH_AREA_BOOTLOADER,
+        .fa_device_id = FLASH_DEVICE_INTERNAL_FLASH,
+        .fa_off = 0x08000000,
+        .fa_size = 0x00010000 // 64 KB
+    },
+    // Primary Slot: Сектор 5 (128КБ)
+    {
+        .fa_id = FLASH_AREA_IMAGE_PRIMARY(0),
+        .fa_device_id = FLASH_DEVICE_INTERNAL_FLASH,
+        .fa_off = 0x08020000,
+        .fa_size = 0x00020000 // 128 KB
+    },
+    // Secondary Slot: Сектор 6 (128КБ)
+    {
+        .fa_id = FLASH_AREA_IMAGE_SECONDARY(0),
+        .fa_device_id = FLASH_DEVICE_INTERNAL_FLASH,
+        .fa_off = 0x08040000,
+        .fa_size = 0x00020000 // 128 KB
+    }
+};
+
+// -----------------------------------------------------------------------------
+// 2. Вспомогательные функции для работы с аппаратными секторами STM32F4
+// -----------------------------------------------------------------------------
+static uint32_t get_sector_number(uint32_t address) {
+    if (address < 0x08010000) {
+        return (address - 0x08000000) / 0x4000; // Сектора 0-3 по 16 КБ
+    } else if (address < 0x08020000) {
+        return 4; // Сектор 4, 64 КБ
+    } else if (address < 0x08100000) {
+        return 5 + (address - 0x08020000) / 0x20000; // Сектора 5-11 по 128 КБ
+    }
+    return 0xFF; // Ошибка (адрес вне диапазона)
+}
+
+static uint32_t get_sector_size(uint32_t sector_num) {
+    if (sector_num <= 3) return 0x4000;  // 16 KB
+    if (sector_num == 4) return 0x10000; // 64 KB
+    return 0x20000;                      // 128 KB (сектора 5-11)
+}
+
+// -----------------------------------------------------------------------------
+// 3. Реализация API MCUboot
+// -----------------------------------------------------------------------------
+
+int flash_area_open(uint8_t id, const struct flash_area **area_outp) {
+    for (size_t i = 0; i < sizeof(flash_areas) / sizeof(flash_areas[0]); i++) {
+        if (flash_areas[i].fa_id == id) {
+            *area_outp = &flash_areas[i];
+            return 0;
         }
     }
-    if (i == flash_map_entry_num) {
-        return -1;
-    }
+    return -1; // Область не найдена
+}
 
-    *area = &flash_map[i];
+void flash_area_close(const struct flash_area *fa) {
+    // Для внутренней флеш-памяти STM32 закрывать ничего не нужно
+    (void)fa;
+}
+
+int flash_area_read(const struct flash_area *fa, uint32_t off, void *dst, uint32_t len) {
+    // Внутренняя флеш STM32 отображена в память (memory-mapped), просто копируем
+    if (off + len > fa->fa_size) {
+        return -1; // Выход за границы области
+    }
+    memcpy(dst, (const void *)(fa->fa_off + off), len);
     return 0;
 }
 
-void flash_area_close(const struct flash_area *area)
-{
-    /* Nothing to do. */
-}
-
-int flash_area_read(const struct flash_area *area, uint32_t off, void *dst,
-                    uint32_t len)
-{
-    BOOT_LOG_DBG("read area=%d, off=%#x, len=%#x", area->fa_id, off, len);
-
-    if (!is_range_valid(area, off, len)) {
+int flash_area_write(const struct flash_area *fa, uint32_t off, const void *src, uint32_t len) {
+    if (off + len > fa->fa_size) {
         return -1;
     }
 
-    return DRV_FLASH_AREA(area)->ReadData(area->fa_off + off, dst, len);
-}
+    HAL_StatusTypeDef status = HAL_OK;
+    uint32_t address = fa->fa_off + off;
+    const uint8_t *data = (const uint8_t *)src;
 
-int flash_area_write(const struct flash_area *area, uint32_t off,
-                     const void *src, uint32_t len)
-{
-    BOOT_LOG_DBG("write area=%d, off=%#x, len=%#x", area->fa_id, off, len);
+    HAL_FLASH_Unlock();
 
-    if (!is_range_valid(area, off, len)) {
-        return -1;
-    }
-
-    return DRV_FLASH_AREA(area)->ProgramData(area->fa_off + off, src, len);
-}
-
-int flash_area_erase(const struct flash_area *area, uint32_t off, uint32_t len)
-{
-    ARM_FLASH_INFO *flash_info;
-    uint32_t deleted_len = 0;
-    int32_t rc = 0;
-
-    BOOT_LOG_DBG("erase area=%d, off=%#x, len=%#x", area->fa_id, off, len);
-
-    if (!is_range_valid(area, off, len)) {
-        return -1;
-    }
-
-    flash_info = DRV_FLASH_AREA(area)->GetInfo();
-
-    if (flash_info->sector_info == NULL) {
-        /* Uniform sector layout */
-        while (deleted_len < len) {
-            rc = DRV_FLASH_AREA(area)->EraseSector(area->fa_off + off);
-            if (rc != 0) {
-                break;
-            }
-            deleted_len += flash_info->sector_size;
-            off         += flash_info->sector_size;
+    // STM32F4 программируется по словам (4 байта / 32 бита).
+    // MCUboot гарантирует, что len кратно MCUBOOT_FLASH_ALIGN (мы зададим 4).
+    for (uint32_t i = 0; i < len; i += 4) {
+        uint32_t data_to_write = *((const uint32_t *)(data + i));
+        status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, data_to_write);
+        if (status != HAL_OK) {
+            HAL_FLASH_Lock();
+            return -1;
         }
-    } else {
-        /* Inhomogeneous sector layout, explicitly defined
-         * Currently not supported.
-         */
+        address += 4;
     }
 
-    return rc;
+    HAL_FLASH_Lock();
+    return 0;
 }
 
-uint32_t flash_area_align(const struct flash_area *area)
-{
-    ARM_FLASH_INFO *flash_info;
+int flash_area_erase(const struct flash_area *fa, uint32_t off, uint32_t len) {
+    if (off + len > fa->fa_size) {
+        return -1;
+    }
 
-    flash_info = DRV_FLASH_AREA(area)->GetInfo();
-    return flash_info->program_unit;
+    uint32_t current_addr = fa->fa_off + off;
+    uint32_t remaining_len = len;
+
+    HAL_FLASH_Unlock();
+
+    while (remaining_len > 0) {
+        uint32_t sector = get_sector_number(current_addr);
+        uint32_t sector_size = get_sector_size(sector);
+        
+        uint32_t erase_len = (remaining_len < sector_size) ? remaining_len : sector_size;
+
+        FLASH_EraseInitTypeDef erase_init = {
+            .TypeErase = FLASH_TYPEERASE_SECTORS,
+            .Banks = FLASH_BANK_1,
+            .Sector = sector,
+            .NbSectors = 1, // Стираем по одному сектору за раз
+            .VoltageRange = FLASH_VOLTAGE_RANGE_3 // 2.7V - 3.6V (стандарт для 3.3V)
+        };
+
+        uint32_t sector_error = 0;
+        if (HAL_FLASHEx_Erase(&erase_init, &sector_error) != HAL_OK) {
+            HAL_FLASH_Lock();
+            return -1;
+        }
+
+        current_addr += erase_len;
+        remaining_len -= erase_len;
+    }
+
+    HAL_FLASH_Lock();
+    return 0;
+}
+
+size_t flash_area_align(const struct flash_area *area) {
+    (void)area;
+    return 4; // Для STM32F4 минимальный шаг записи - 4 байта (WORD)
+}
+
+uint8_t flash_area_erased_val(const struct flash_area *area) {
+    (void)area;
+    return 0xFF;
+}
+
+int flash_area_get_sectors(int fa_id, uint32_t *count, struct flash_sector *sectors) {
+    const struct flash_area *fa = NULL;
+    if (flash_area_open(fa_id, &fa) != 0) {
+        return -1;
+    }
+
+    uint32_t current_addr = fa->fa_off;
+    uint32_t remaining_size = fa->fa_size;
+    uint32_t sector_count = 0;
+
+    while (remaining_size > 0 && sector_count < *count) {
+        uint32_t sector_num = get_sector_number(current_addr);
+        uint32_t sector_size = get_sector_size(sector_num);
+        
+        uint32_t current_sector_size = (remaining_size < sector_size) ? remaining_size : sector_size;
+
+        sectors[sector_count].fs_off = current_addr - fa->fa_off;
+        sectors[sector_count].fs_size = current_sector_size;
+
+        current_addr += current_sector_size;
+        remaining_size -= current_sector_size;
+        sector_count++;
+    }
+
+    *count = sector_count;
+    return 0;
+}
+
+int flash_area_id_from_multi_image_slot(int image_index, int slot) {
+    if (image_index != 0) {
+        return -1; // Поддерживаем только image 0
+    }
+    return flash_area_id_from_image_slot(slot);
+}
+
+int flash_area_id_from_image_slot(int slot) {
+    switch (slot) {
+        case 0: return FLASH_AREA_IMAGE_PRIMARY(0);
+        case 1: return FLASH_AREA_IMAGE_SECONDARY(0);
+        default: return -1;
+    }
 }
