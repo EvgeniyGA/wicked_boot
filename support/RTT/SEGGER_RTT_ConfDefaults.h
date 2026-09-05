@@ -1,0 +1,8 @@
+#ifndef SEGGER_RTT_CONFDEFAULTS_H
+#define SEGGER_RTT_CONFDEFAULTS_H
+
+#include "SEGGER_RTT_Conf.h"
+
+#define SEGGER_SYSVIEW_RTT_CHANNEL  (1)
+
+#endif

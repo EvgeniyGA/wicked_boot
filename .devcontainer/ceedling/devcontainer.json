@@ -1,0 +1,33 @@
+{
+    "name": "Ceedling Unit Tests",
+    "context": "../..",
+    "dockerComposeFile": "../../compose.yaml",
+    "service": "ceedling-tests",
+    "workspaceFolder": "/home/dev",
+    "shutdownAction": "stopCompose",
+    "overrideCommand": true,
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+				"ms-vscode.cmake-tools",
+                "marus25.cortex-debug",
+                "twxs.cmake",
+                "ms-vscode.hexeditor",
+                "numaru.vscode-ceedling-test-adapter"	
+            ],
+            "settings": {
+                "clangd.arguments": [
+                    "--compile-commands-dir=${workspaceFolder}/build",
+                    "--background-index"
+                ],
+                "C_Cpp.default.cStandard": "c11",
+                "C_Cpp.default.cppStandard": "c++17"
+            }
+        }
+    },
+    "remoteEnv": {
+        "CEEDLING_FLAGS": "--verbose"
+    },
+    "postCreateCommand": "echo '🧪 Ceedling ready. Run: ceedling test:all'"
+}

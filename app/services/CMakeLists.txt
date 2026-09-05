@@ -1,0 +1,6 @@
+add_subdirectory(lcd_printer)
+add_subdirectory(diskio_drivers)
+add_subdirectory(usb_service)
+add_subdirectory(cli_service)
+add_subdirectory(config_service)
+add_subdirectory(status_service)

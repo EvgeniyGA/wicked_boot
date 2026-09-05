@@ -1,0 +1,91 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cmake",
+			"label": "CMake: build",
+			"command": "build",
+			"targets": [
+				"all"
+			],
+			"preset": "Debug",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"detail": "CMake template build task"
+		},
+		{
+			"label": "Flash F4 (j-link)",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/C",
+				"((echo r & echo h & echo loadfile stm32f4-debug/${workspaceFolderBasename}.elf & echo q) > flash.jlink) && (JLink.exe -device STM32F407VG -if SWD -speed 4000 -NoGui 1 -CommandFile flash.jlink)"
+			],
+			"options": { "cwd": "${workspaceFolder}/build" },
+			"group": "build",
+			"detail": "Flash STM32F4 (j-link)."
+		},
+		{
+			"label": "Erase F4 (j-link)",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/C",
+				"((echo r & echo h & echo erase & echo q) > erase.jlink) && (JLink.exe -device STM32F407VG -if SWD -speed 4000 -NoGui 1 -CommandFile erase.jlink)"
+			],
+			"options": { "cwd": "${workspaceFolder}/build" },
+			"group": "build",
+			"detail": "Erase STM32F4 (j-link)."
+		},
+		{
+			"label": "Flash F7 (j-link)",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/C",
+				"((echo r & echo h & echo loadfile stm32f7-debug/${workspaceFolderBasename}.elf & echo q) > flash.jlink) && (JLink.exe -device STM32F746IG -if SWD -speed 4000 -NoGui 1 -CommandFile flash.jlink)"
+			],
+			"options": { "cwd": "${workspaceFolder}/build" },
+			"group": "build",
+			"detail": "Flash STM32F7 (j-link)."
+		},
+		{
+			"label": "Run qemu-arm (gdb)",
+			"type": "shell",
+			"command": "qemu-system-arm",
+			"args": [
+				"-M", "netduinoplus2",
+				"-nographic", 
+				"-serial", "mon:stdio",
+				"-gdb", "tcp::1234", "-S",        
+				"-kernel", "${command:cmake.launchTargetPath}"
+			],
+			"isBackground": true,
+			"problemMatcher": {
+				"pattern": [ { "regexp": ".", "file": 1, "location": 2, "message": 3 } ],
+				"background": { "activeOnStart": true, "beginsPattern": "^.*", "endsPattern": "^$"
+				}
+			}
+		},
+		{
+			"label": "Run qemu-arm",
+			"type": "shell",
+			"command": "qemu-system-arm",
+			"args": [
+				"-M", "netduinoplus2",
+				"-nographic", 
+				"-serial", "mon:stdio",     
+				"-kernel", "${command:cmake.launchTargetPath}"
+			],
+			"isBackground": true,
+			"problemMatcher": {
+				"pattern": [ { "regexp": ".", "file": 1, "location": 2, "message": 3 } ],
+				"background": { "activeOnStart": true, "beginsPattern": "^.*", "endsPattern": "^$"
+				}
+			}
+		},
+	]
+}

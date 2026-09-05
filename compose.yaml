@@ -1,0 +1,19 @@
+services:
+  ceedling-tests:
+    user: root
+    build:
+      context: .
+      dockerfile: Dockerfile.ceedling-tests
+    volumes:
+      - .:/home/dev
+    image: ceedling-tests
+    working_dir: /home/dev
+  stm32-dev:
+    user: root
+    build:
+      context: .
+      dockerfile: Dockerfile.stm32-dev
+    volumes:
+      - .:/home/dev
+    image: stm32-dev
+    working_dir: /home/dev

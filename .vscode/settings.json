@@ -1,0 +1,13 @@
+{
+    "cmake.configureEnvironment": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "on"
+    },
+    "C_Cpp.default.intelliSenseMode": "gcc-arm",
+    "files.associations": {
+        "stm32f4xx_hal.h": "c",
+        "stm32f4xx.h": "c"
+    },
+    "cortex-debug.gdbPath.linux": "arm-none-eabi-gdb",
+    "cortex-debug.gdbPath.windows": "C:/arm/arm-none-eabi/bin/arm-none-eabi-gdb.exe",
+    "cortex-debug.JLinkGDBServerPath.windows": "C:/Program Files/SEGGER/JLink_V918/JLinkGDBServerCL.exe",
+}

@@ -1,0 +1,9 @@
+/targets/stm32f4/Debug
+targets/stm32f4/.settings/stm32cubeide.project.prefs
+targets/stm32f4/gas-lighter-f4 Debug.launch
+/targets/stm32f4/.settings
+/build
+/targets/stm32f7/Debug
+/test/pytest/__pycache__
+/targets/stm32h7/Debug
+.DS_Store

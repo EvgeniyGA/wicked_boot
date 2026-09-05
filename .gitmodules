@@ -1,0 +1,21 @@
+[submodule "modules/freertos"]
+	path = modules/freertos
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "modules/RTT"]
+	path = modules/RTT
+	url = https://github.com/SEGGERMicro/RTT.git
+[submodule "modules/tinyusb"]
+	path = modules/tinyusb
+	url = https://github.com/hathach/tinyusb.git
+[submodule "modules/fatfs"]
+	path = modules/fatfs
+	url = https://github.com/STMicroelectronics/stm32-mw-fatfs
+[submodule "modules/CMSIS-DSP"]
+	path = modules/CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "modules/SystemView"]
+	path = modules/SystemView
+	url = https://github.com/SEGGERMicro/SystemView.git
+[submodule "modules/mcuboot"]
+	path = modules/mcuboot
+	url = https://github.com/mcu-tools/mcuboot.git

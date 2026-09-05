@@ -1,0 +1,12 @@
+# docker/Dockerfile
+FROM throwtheswitch/madsciencelab-plugins:1.0.0 AS base
+
+USER root
+
+RUN apt update && \
+    apt install -y gcovr && \
+    rm -rf /var/lib/apt/lists/*
+
+USER dev
+
+WORKDIR /home/dev
