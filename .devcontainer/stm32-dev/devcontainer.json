@@ -25,7 +25,7 @@
                 "python.testing.pytestEnabled": true,
                 "python.testing.pytestArgs": [
                     "tests",
-                    "--fw-image=build/qemu-f4/gas-lighter-fw.elf",
+                    "--fw-image=build/qemu-f4/wicked_boot.elf",
                     "-v"
                 ],
                 "python.testing.unittestEnabled": false,

@@ -68,10 +68,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-#ifndef FOR_QEMU
-  SCB->VTOR = 0x08020000;
-  __enable_irq();
-#endif
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -92,7 +89,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USB_OTG_FS_PCD_Init();
+//  MX_USB_OTG_FS_PCD_Init();
   MX_USART1_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */

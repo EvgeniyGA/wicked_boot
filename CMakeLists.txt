@@ -40,69 +40,10 @@ target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
 include(cmake/version.cmake)
 generate_version_header()
 
-
-#set(MCUBOOT_USE_MBED_TLS OFF CACHE BOOL "" FORCE)
-#set(MCUBOOT_USE_TINYCRYPT ON CACHE BOOL "" FORCE)
-#set(MCUBOOT_SIGN_EC256 ON CACHE BOOL "" FORCE)
-#set(MCUBOOT_BOOT_MAX_ALIGN 8 CACHE STRING "" FORCE)
-#set(MCUBOOT_FLASH_ALIGN 4 CACHE STRING "" FORCE)
-#set(MCUBOOT_LOG_LEVEL 4  CACHE STRING "" FORCE)
-
-# 1. ЖЕСТКО задаем переменные для внутреннего CMake-скрипта MCUboot
-#set(MCUBOOT_USE_MBED_TLS OFF CACHE BOOL "" FORCE)
-#set(MCUBOOT_USE_TINYCRYPT ON CACHE BOOL "" FORCE)
-#set(MCUBOOT_SIGN_EC256 ON CACHE BOOL "" FORCE)
-
-# 2. ГЛОБАЛЬНО задаем дефайны для компилятора (применится ко ВСЕМ .c файлам проекта)
-#add_compile_definitions(
-#    MCUBOOT_USE_TINYCRYPT=1
-#    MCUBOOT_USE_MBED_TLS=0
-#    MCUBOOT_SIGN_EC256=1
-#    MCUBOOT_BOOT_MAX_ALIGN=8
-#    MCUBOOT_FLASH_ALIGN=4
-#    MCUBOOT_LOG_LEVEL=4
-#)
-
-
-
-# 3. Добавляем bootutil
-#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/modules/mcuboot/boot/bootutil bootutil_build)
-
-
-# 5. Линкуем математику TinyCrypt к bootutil
-#target_link_libraries(bootutil PUBLIC tinycrypt)
-
-# 6. Линкуем bootutil к твоему support-таргету (чтобы он видел заголовки)
-
-
 add_subdirectory(targets)
 add_subdirectory(modules)
 add_subdirectory(support)
 add_subdirectory(app)
-
-#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/modules/mcuboot/ext/tinycrypt tinycrypt_build)
-#target_include_directories(bootutil PUBLIC 
-#    ${CMAKE_CURRENT_SOURCE_DIR}/support/mcuboot_support/include
-#    ${CMAKE_SOURCE_DIR}/modules/mcuboot/ext/tinycrypt
-
-#    ${CMAKE_CURRENT_SOURCE_DIR}/modules/mcuboot/ext/mbedtls-asn1/include
-#)
-
-
-
-
-
-
-
-#target_compile_definitions(bootutil PUBLIC
-#    MCUBOOT_USE_TINYCRYPT=1
-#    MCUBOOT_USE_MBED_TLS=0
-#    MCUBOOT_SIGN_EC256=1
-#    MCUBOOT_BOOT_MAX_ALIGN=8
-#    MCUBOOT_FLASH_ALIGN=4
-#    MCUBOOT_LOG_LEVEL=4
-#)
-
 
 target_link_libraries(${MAIN_EXECUTABLE} 
     freertos_kernel

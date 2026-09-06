@@ -1,6 +1,5 @@
 #ifndef _MCUBOOT_ASSERT_H_
 #define _MCUBOOT_ASSERT_H_
-//#include "hal/logging.h"
 
 extern void example_assert_handler(const char *file, int line);
 
@@ -12,3 +11,8 @@ extern void example_assert_handler(const char *file, int line);
   } while (0)
 
   #endif
+
+
+#ifndef ASSERT
+#define ASSERT(exp) assert(exp)
+#endif

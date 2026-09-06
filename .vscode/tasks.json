@@ -29,6 +29,88 @@
 			"detail": "Flash STM32F4 (j-link)."
 		},
 		{
+			"label": "1. Sign App for MCUboot",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"${workspaceFolder}/modules/mcuboot/scripts/imgtool.py",
+				"sign",
+				"--key", "modules/mcuboot/root-ec-p256.pem",
+				"--header-size", "0x200",
+				"--align", "4",
+				"--slot-size", "0x40000",
+				"--version", "1.0.0",
+				"--pad-header",
+				"test.bin",
+				"build/signed_app.bin"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "Подписывает test.bin и сохраняет как build/signed_app.bin"
+		},
+		{
+			"label": "2. Flash Signed App (J-Link)",
+			"type": "shell",
+			"command": "JLink.exe",
+			"args": [
+				"-device", "STM32F407VG",
+				"-if", "SWD",
+				"-speed", "4000",
+				"-NoGui", "1",
+				"-CommandFile", "flash_app.jlink"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "Прошивает signed_app.bin по адресу 0x08040000 через J-Link",
+			"dependsOn": "1. Sign App for MCUboot"
+		},
+
+		{
+			"label": "3. Sign App for MCUboot",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"${workspaceFolder}/modules/mcuboot/scripts/imgtool.py",
+				"sign",
+				"--key", "modules/mcuboot/root-ec-p256.pem",
+				"--header-size", "0x200",
+				"--align", "4",
+				"--slot-size", "0x40000",
+				"--version", "1.0.1",
+				"--pad-header",
+				"test2.bin",
+				"build/signed_app2.bin"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "Подписывает test2.bin и сохраняет как build/signed_app2.bin"
+		},
+		{
+			"label": "4. Flash Signed App (J-Link)",
+			"type": "shell",
+			"command": "JLink.exe",
+			"args": [
+				"-device", "STM32F407VG",
+				"-if", "SWD",
+				"-speed", "4000",
+				"-NoGui", "1",
+				"-CommandFile", "flash_app2.jlink"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "Прошивает signed_app2.bin по адресу 0x08080000 через J-Link",
+			"dependsOn": "3. Sign App for MCUboot"
+		},
+
+		{
 			"label": "Erase F4 (j-link)",
 			"type": "shell",
 			"command": "cmd",

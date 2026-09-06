@@ -1,0 +1,5 @@
+r
+h
+loadbin "build/signed_app2.bin", 0x08080000
+r
+q

@@ -1,8 +1,6 @@
 add_library(lcd_service STATIC 
     include/lcd_printer.h
-    src/lcd_driver.h 
     src/lcd_printer.c
-    src/lcd_driver.c
 )
 
 target_include_directories(lcd_service PUBLIC

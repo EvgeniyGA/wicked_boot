@@ -7,8 +7,10 @@
 
 #pragma once
 
-#define MCUBOOT_USE_TINYCRYPT 1
 #define MCUBOOT_USE_FLASH_AREA_GET_SECTORS 1
+
+
+#define MCUBOOT_LOG_LEVEL 4 
 
 // When there isn't a valid primary, use secondary
 #define MCUBOOT_BOOTSTRAP 1
@@ -20,10 +22,10 @@
  */
 
 /* Uncomment for RSA signature support */
-/* #define MCUBOOT_SIGN_RSA */
+/* #define MCUBOOT_SIGN_RSA 1 */
 
 /* Uncomment for ECDSA signatures using curve P-256. */
-/* #define MCUBOOT_SIGN_EC256 */
+ #define MCUBOOT_SIGN_EC256 
 
 
 /*
@@ -38,16 +40,16 @@
  * the default upgrade mode.
  */
 
-#define MCUBOOT_SWAP_USING_MOVE 1
-
 /* Uncomment to enable the overwrite-only code path. */
-//#define MCUBOOT_OVERWRITE_ONLY 1
+/* #define MCUBOOT_OVERWRITE_ONLY 1 */
 
 #ifdef MCUBOOT_OVERWRITE_ONLY
 /* Uncomment to only erase and overwrite those primary slot sectors needed
  * to install the new image, rather than the entire image slot. */
 /* #define MCUBOOT_OVERWRITE_ONLY_FAST */
 #endif
+
+#define MCUBOOT_SWAP_USING_MOVE 1
 
 /* Uncomment to enable the direct-xip code path. */
 /* #define MCUBOOT_DIRECT_XIP */
@@ -66,7 +68,7 @@
 /* Uncomment to use ARM's mbedTLS cryptographic primitives */
 /* #define MCUBOOT_USE_MBED_TLS */
 /* Uncomment to use Tinycrypt's. */
-/* #define MCUBOOT_USE_TINYCRYPT */
+#define MCUBOOT_USE_TINYCRYPT
 
 /*
  * Always check the signature of the image in the primary slot before booting,
@@ -91,29 +93,6 @@
  * multiple images. */
 #define MCUBOOT_IMAGE_NUMBER 1
 
-/*
- * Logging
- */
-
-/*
- * If logging is enabled the following functions must be defined by the
- * platform:
- *
- *    MCUBOOT_LOG_MODULE_REGISTER(domain)
- *      Register a new log module and add the current C file to it.
- *
- *    MCUBOOT_LOG_MODULE_DECLARE(domain)
- *      Add the current C file to an existing log module.
- *
- *    MCUBOOT_LOG_ERR(...)
- *    MCUBOOT_LOG_WRN(...)
- *    MCUBOOT_LOG_INF(...)
- *    MCUBOOT_LOG_DBG(...)
- *
- * The function priority is:
- *
- *    MCUBOOT_LOG_ERR > MCUBOOT_LOG_WRN > MCUBOOT_LOG_INF > MCUBOOT_LOG_DBG
- */
 #define MCUBOOT_HAVE_LOGGING 1
 
 /*
@@ -130,3 +109,7 @@
  */
 
 #define MCUBOOT_WATCHDOG_FEED()
+
+// for STM32F407:
+#define MCUBOOT_BOOT_MAX_ALIGN 8   // Требуется для SWAP-режимов ???
+#define MCUBOOT_FLASH_ALIGN 4      // Реальное выравнивание записи флеша F4 ???

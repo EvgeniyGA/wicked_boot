@@ -32,44 +32,16 @@ extern "C" {
 #define MCUBOOT_LOG_LEVEL_INFO      3
 #define MCUBOOT_LOG_LEVEL_DEBUG     4
 
-/*
- * The compiled log level determines the maximum level that can be
- * printed. Messages at or below this level can be printed.
- */
 #ifndef MCUBOOT_LOG_LEVEL
-#define MCUBOOT_LOG_LEVEL           MCUBOOT_LOG_LEVEL_INFO
+#define MCUBOOT_LOG_LEVEL           MCUBOOT_LOG_LEVEL_DEBUG
 #endif
 
-#define MCUBOOT_LOG_MODULE_DECLARE(domain)      /* Ignore */
-#define MCUBOOT_LOG_MODULE_REGISTER(domain)     /* Ignore */
+#define MCUBOOT_LOG_MODULE_DECLARE(...)
 
-#if MCUBOOT_LOG_LEVEL >= MCUBOOT_LOG_LEVEL_ERROR
-#define MCUBOOT_LOG_ERR(_fmt, ...)                  \
-    printf("[ERR] " _fmt "\r\n", ##__VA_ARGS__)
-#else
-#define MCUBOOT_LOG_ERR(...) IGNORE(__VA_ARGS__)
-#endif
-
-#if MCUBOOT_LOG_LEVEL >= MCUBOOT_LOG_LEVEL_WARNING
-#define MCUBOOT_LOG_WRN(_fmt, ...)                  \
-    printf("[WRN] " _fmt "\r\n", ##__VA_ARGS__)
-#else
-#define MCUBOOT_LOG_WRN(...) IGNORE(__VA_ARGS__)
-#endif
-
-#if MCUBOOT_LOG_LEVEL >= MCUBOOT_LOG_LEVEL_INFO
-#define MCUBOOT_LOG_INF(_fmt, ...)                  \
-    printf("[INF] " _fmt "\r\n", ##__VA_ARGS__)
-#else
-#define MCUBOOT_LOG_INF(...) IGNORE(__VA_ARGS__)
-#endif
-
-#if MCUBOOT_LOG_LEVEL >= MCUBOOT_LOG_LEVEL_DEBUG
-#define MCUBOOT_LOG_DBG(_fmt, ...)                  \
-    printf("[DBG] " _fmt "\r\n", ##__VA_ARGS__)
-#else
-#define MCUBOOT_LOG_DBG(...) IGNORE(__VA_ARGS__)
-#endif
+#define MCUBOOT_LOG_ERR(_fmt, ...)   printf("[ERR] " _fmt "\n", ##__VA_ARGS__)
+#define MCUBOOT_LOG_WRN(_fmt, ...)   printf("[WRN] " _fmt "\n", ##__VA_ARGS__)
+#define MCUBOOT_LOG_INF(_fmt, ...)   printf("[INF] " _fmt "\n", ##__VA_ARGS__)
+#define MCUBOOT_LOG_DBG(_fmt, ...)   printf("[DBG] " _fmt "\n", ##__VA_ARGS__)
 
 #ifdef __cplusplus
 }

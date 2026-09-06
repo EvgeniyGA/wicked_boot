@@ -48,21 +48,21 @@ static const struct flash_area flash_areas[] = {
         .fa_id = FLASH_AREA_BOOTLOADER,
         .fa_device_id = FLASH_DEVICE_INTERNAL_FLASH,
         .fa_off = 0x08000000,
-        .fa_size = 0x00010000 // 64 KB
+        .fa_size = 0x00020000 // 128 KB
     },
     // Primary Slot: Сектор 5 (128КБ)
     {
         .fa_id = FLASH_AREA_IMAGE_PRIMARY(0),
         .fa_device_id = FLASH_DEVICE_INTERNAL_FLASH,
-        .fa_off = 0x08020000,
-        .fa_size = 0x00020000 // 128 KB
+        .fa_off = 0x08040000,
+        .fa_size = 0x00040000 // 256 KB
     },
     // Secondary Slot: Сектор 6 (128КБ)
     {
         .fa_id = FLASH_AREA_IMAGE_SECONDARY(0),
         .fa_device_id = FLASH_DEVICE_INTERNAL_FLASH,
-        .fa_off = 0x08040000,
-        .fa_size = 0x00020000 // 128 KB
+        .fa_off = 0x08080000,
+        .fa_size = 0x00040000 // 256 KB
     }
 };
 
@@ -230,4 +230,37 @@ int flash_area_id_from_image_slot(int slot) {
         case 1: return FLASH_AREA_IMAGE_SECONDARY(0);
         default: return -1;
     }
+}
+
+// -----------------------------------------------------------------------------
+// Получение информации о конкретном секторе по его индексу (новое API MCUboot)
+// -----------------------------------------------------------------------------
+int flash_area_get_sector(const struct flash_area *fa, uint32_t i, struct flash_sector *sector) {
+    if (!fa || !sector) {
+        return -1;
+    }
+
+    uint32_t current_addr = fa->fa_off;
+    uint32_t remaining_size = fa->fa_size;
+    uint32_t current_index = 0;
+
+    while (remaining_size > 0) {
+        uint32_t sector_num = get_sector_number(current_addr);
+        uint32_t sector_size = get_sector_size(sector_num);
+        
+        // Размер текущего сектора (на случай, если область заканчивается посередине сектора)
+        uint32_t current_sector_size = (remaining_size < sector_size) ? remaining_size : sector_size;
+
+        if (current_index == i) {
+            sector->fs_off = current_addr - fa->fa_off;
+            sector->fs_size = current_sector_size;
+            return 0; // Успех
+        }
+
+        current_addr += current_sector_size;
+        remaining_size -= current_sector_size;
+        current_index++;
+    }
+
+    return -1; // Запрошенный индекс выходит за пределы данной flash_area
 }

@@ -32,6 +32,7 @@ set(BSP_SOURCES
     ${TARGET}/Core/Src/gpio_driver.c
     ${TARGET}/Core/Src/W25Qxx.c
     ${TARGET}/Core/Src/common.c
+    ${TARGET}/Core/Src/lcd_driver.c
 )
 
 add_library(bsp_drivers STATIC 

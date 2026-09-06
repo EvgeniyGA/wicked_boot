@@ -5,16 +5,9 @@
 #include "queue.h"
 #include <stdio.h>
 
-#define LCD_PRINTER_STACK_SIZE      configMINIMAL_STACK_SIZE * 2
-#define LCD_MAX_LEN             (20)
-#define LCD_PRINTER_BUF_LEN     (10)
 
-typedef struct{
-    char data[LCD_MAX_LEN];
-    uint8_t data_len;
-    uint8_t line;
-    uint8_t offset;
-}lcd_printer_msg_t;
+
+
 
 static StackType_t lcd_printer_stack[LCD_PRINTER_STACK_SIZE];
 static StaticTask_t lcd_printer_taskdef;
