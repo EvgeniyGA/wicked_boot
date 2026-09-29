@@ -8,7 +8,7 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 #include "ff.h"
-#include "ff_gen_drv.h"
+//#include "ff_gen_drv.h"
 
 #include "sram_diskio.h"
 #include "flash_diskio.h"

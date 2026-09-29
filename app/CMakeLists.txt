@@ -10,5 +10,3 @@ target_sources(${PROJECT_NAME} PRIVATE
     core/src/wrapper.c
     core/src/version_check.c
 )
-
-add_subdirectory(services)

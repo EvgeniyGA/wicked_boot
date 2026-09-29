@@ -1,10 +1,13 @@
 #include "flash_map_backend/flash_map_backend.h"
 #include "sysflash/sysflash.h"
-#include "stm32f4xx_hal.h"
 #include <string.h>
 #include <stddef.h>
 
-
+#ifdef STM32F746xx
+    #include "stm32f7xx_hal.h"
+#elif defined STM32F407xx
+    #include "stm32f4xx_hal.h"
+#endif
 
 
 

@@ -42,10 +42,10 @@
 				"--version", "1.0.0",
 				"--pad-header",
 				"test.bin",
-				"build/signed_app.bin"
+				"stm32f4-debug/${workspaceFolderBasename}.elf"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}"
+				"cwd": "${workspaceFolder}/build"
 			},
 			"group": "build",
 			"detail": "Подписывает test.bin и сохраняет как build/signed_app.bin"

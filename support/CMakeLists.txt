@@ -1,6 +1,2 @@
 add_subdirectory(RTT)
-add_subdirectory(SystemView)
-add_subdirectory(freertos_support)
-add_subdirectory(tinyusb)
-add_subdirectory(fatfs)
 add_subdirectory(mcuboot_support)

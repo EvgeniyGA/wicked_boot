@@ -3,6 +3,30 @@
 
 #include "stm32f4xx_hal.h"
 
+#define LCD_PRINTER_STACK_SIZE      configMINIMAL_STACK_SIZE * 2
+#define LCD_MAX_LEN             (20)
+#define LCD_PRINTER_BUF_LEN     (10)
+
+typedef enum{
+    LCD_PRINTER_LINE1 = 0,
+    LCD_PRINTER_LINE2,
+    LCD_PRINTER_LINE3,
+    LCD_PRINTER_LINE4,
+    LCD_PRINTER_LINES
+}lcd_printer_lines_e;
+
+typedef enum{
+    LCD_PRINTER_OFFSET_ZERO = 0,
+    LCD_PRINTER_OFFSET_HALF = 10 //check
+}lcd_printer_offset_e;
+
+typedef struct{
+    char data[LCD_MAX_LEN];
+    uint8_t data_len;
+    uint8_t line;
+    uint8_t offset;
+}lcd_printer_msg_t;
+
 // Структура для хранения настроек пинов
 typedef struct {
     GPIO_TypeDef* RS_Port;

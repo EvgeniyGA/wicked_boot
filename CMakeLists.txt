@@ -8,16 +8,10 @@ string(STRIP "${FW_VERSION_RAW}" FW_VERSION)
 project(wicked_boot VERSION ${FW_VERSION} LANGUAGES C CXX ASM)
 
 if(FOR_QEMU)
-    add_compile_definitions(MSC_USE_SRAM)
     add_compile_definitions(PRINTF_UART)
     add_compile_definitions(FOR_QEMU)
-    set(MAIN_TIME_RESOLUTION 1 CACHE STRING "buffer size")
-    set(DISKIO_DRIVER_SRC "drivers/sram_diskio.c")
 else()
-    add_compile_definitions(MSC_USE_FLASH)
     add_compile_definitions(PRINTF_RTT)
-    set(MAIN_TIME_RESOLUTION 32 CACHE STRING "buffer size")
-    set(DISKIO_DRIVER_SRC "drivers/flash_diskio.c")
 endif()
 
 set(CMAKE_C_STANDARD 11)
@@ -46,24 +40,9 @@ add_subdirectory(support)
 add_subdirectory(app)
 
 target_link_libraries(${MAIN_EXECUTABLE} 
-    freertos_kernel
-    freertos_support
-    freertos_cli_core
-    cli_service
-    fatfs_core
-
     segger_rtt         
-    segger_sysview 
-    lcd_service
-
-    config_service
-    status_service
-    tinyusb_support
-    usb_service
-    diskio_drivers
     bsp_drivers
     app_version
-    
     bootutil
     mcuboot_support
 )
