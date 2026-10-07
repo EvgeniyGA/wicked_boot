@@ -4,6 +4,7 @@
 #include "version.h"
 #include "version_check.h"
 #include "app.h"
+#include <string.h>
 
 #include "main.h"
 #include "bootutil/bootutil.h"
@@ -15,7 +16,6 @@
     #include "stm32f4xx.h"
     #include "lcd_driver.h"
 #endif
-#include "bootutil/bootutil.h"
 
 void init(void){
 #ifndef FOR_QEMU
@@ -30,7 +30,7 @@ static void do_boot(struct boot_rsp *rsp) {
     // ih_hdr_size  = 0x00000200 (512 байт заголовка MCUboot)
     // Итого: 0x08040200. Именно здесь лежит таблица векторов приложения.
     uint32_t app_start_addr = rsp->br_image_off + rsp->br_hdr->ih_hdr_size;
-printf("\n\r==before jump==\n\r");
+    printf("\n\r==before jump==\n\r");
     // 2. Отключаем прерывания
     __disable_irq();
 
@@ -76,34 +76,30 @@ void My_Delay(uint32_t Delay){
 }
 
 void setup(void){
+	printf("Bootloader version: %s\n", FW_VERSION_STR);
+	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
+	printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
 
+	if (is_hash_invalid(FW_GIT_HASH)) {
+		printf("ERROR: Invalid firmware hash detected: %s\r\n", FW_GIT_HASH ? FW_GIT_HASH : "NULL");
+	} else {
+		printf("FW Hash: %s\r\n", FW_GIT_HASH);
+	}
 #ifdef STM32F407xx
     static LCD_HandleTypeDef hlcd1 = {.delay_ms = My_Delay}; //HAL_Delay;
     lcd_printer_msg_t msg;
 
     msg.line = 0;
     msg.offset = 0;
-    msg.data[0] = 'l';
-    msg.data[1] = 'o';
-    msg.data[2] = 'a';
-    msg.data[3] = 'd';
-    msg.data[4] = 'i';
-    msg.data[5] = 'n';
-    msg.data[6] = 'g';
-    msg.data[7] = '.';
-    msg.data[8] = '.';
-    msg.data[9] = '.';
-    msg.data[10] = 0;
-
+    strcpy(msg.data, "loading");
 
     LCD_Init(&hlcd1);
     LCD_SetCursor(&hlcd1, msg.line, msg.offset);
     LCD_SendString(&hlcd1, msg.data);
 #endif
-    //lcd_print(LCD_PRINTER_LINE1, LCD_PRINTER_OFFSET_ZERO + 1, "Version: %d", 123);
     My_Delay(1000);
 
-    printf("==Starting Bootloader==");
+    printf("==Starting Bootloader==\n\r");
 
 	struct boot_rsp rsp;
 	int rv = boot_go(&rsp);
@@ -113,16 +109,7 @@ void setup(void){
 	}
 
 	printf("No bootable image found. Falling into Bootloader CLI:");
-	
-	printf("Firmware version: %s\n", FW_VERSION_STR);
-	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
-	printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
-
-	if (is_hash_invalid(FW_GIT_HASH)) {
-		printf("ERROR: Invalid firmware hash detected: %s\r\n", FW_GIT_HASH ? FW_GIT_HASH : "NULL");
-	} else {
-		printf("FW Hash: %s\r\n", FW_GIT_HASH);
-	}
+    while(1);
 }
 
 
