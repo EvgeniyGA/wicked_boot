@@ -31,18 +31,18 @@
 		{
 			"label": "1. Sign App for MCUboot",
 			"type": "shell",
-			"command": "python",
+			"command": "python3",
 			"args": [
 				"${workspaceFolder}/modules/mcuboot/scripts/imgtool.py",
 				"sign",
-				"--key", "modules/mcuboot/root-ec-p256.pem",
+				"--key", "/home/dev/modules/mcuboot/root-ec-p256.pem",
 				"--header-size", "0x200",
 				"--align", "4",
 				"--slot-size", "0x40000",
 				"--version", "1.0.0",
 				"--pad-header",
-				"test.bin",
-				"stm32f4-debug/${workspaceFolderBasename}.elf"
+				"/home/dev/test.bin",
+				"/home/dev/build/signed_app.bin"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/build"
@@ -160,7 +160,8 @@
 				"-M", "netduinoplus2",
 				"-nographic", 
 				"-serial", "mon:stdio",     
-				"-kernel", "${command:cmake.launchTargetPath}"
+				"-kernel", "${command:cmake.launchTargetPath}",
+				"-device", "loader,file=/home/dev/build/signed_app2.bin,addr=0x08040000,force-raw=on"
 			],
 			"isBackground": true,
 			"problemMatcher": {

@@ -10,12 +10,30 @@
 #include "bootutil/bootutil.h"
 #include "bootutil/image.h"
 
+#include "shell/shell.h"
+#include "stm32f4xx.h"
+extern UART_HandleTypeDef huart1;
+
 #ifdef STM32F746xx
     #include "stm32f7xx.h"
 #elif defined STM32F407xx
     #include "stm32f4xx.h"
     #include "lcd_driver.h"
 #endif
+
+int console_putc(char c) {
+  //app_uart_put(c);
+  HAL_StatusTypeDef status = HAL_UART_Transmit(&huart1, (uint8_t*)&c, 1, HAL_MAX_DELAY);
+  return 1;
+}
+
+char console_getc(void) {
+  uint8_t cr;
+  //while (app_uart_get(&cr) != NRF_SUCCESS);
+    while(HAL_UART_Receive(&huart1, &cr, 1, 0) != HAL_OK);
+
+  return (char)cr;
+}
 
 void init(void){
 #ifndef FOR_QEMU
@@ -76,6 +94,7 @@ void My_Delay(uint32_t Delay){
 }
 
 void setup(void){
+    printf("\n\r==Starting Bootloader==\n\r");
 	printf("Bootloader version: %s\n", FW_VERSION_STR);
 	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
 	printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
@@ -89,17 +108,15 @@ void setup(void){
     static LCD_HandleTypeDef hlcd1 = {.delay_ms = My_Delay}; //HAL_Delay;
     lcd_printer_msg_t msg;
 
+    LCD_Init(&hlcd1);
+
     msg.line = 0;
     msg.offset = 0;
     strcpy(msg.data, "loading");
-
-    LCD_Init(&hlcd1);
     LCD_SetCursor(&hlcd1, msg.line, msg.offset);
     LCD_SendString(&hlcd1, msg.data);
 #endif
     My_Delay(1000);
-
-    printf("==Starting Bootloader==\n\r");
 
 	struct boot_rsp rsp;
 	int rv = boot_go(&rsp);
@@ -108,8 +125,17 @@ void setup(void){
 		do_boot(&rsp);
 	}
 
-	printf("No bootable image found. Falling into Bootloader CLI:");
-    while(1);
+    strcpy(msg.data, "fail");
+    //LCD_SetCursor(&hlcd1, msg.line, msg.offset);
+    LCD_SendString(&hlcd1, msg.data);
+	printf("No bootable image found. Falling into Bootloader CLI:\n\r");
+    char c;
+        sShellImpl shell_impl = {
+        .send_char = console_putc,
+    };
+    shell_boot(&shell_impl);
+    while (true) {
+        c = console_getc();
+        shell_receive_char(c);
+    }
 }
-
-
