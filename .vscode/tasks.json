@@ -29,28 +29,6 @@
 			"detail": "Flash STM32F4 (j-link)."
 		},
 		{
-			"label": "1. Sign App for MCUboot",
-			"type": "shell",
-			"command": "python3",
-			"args": [
-				"${workspaceFolder}/modules/mcuboot/scripts/imgtool.py",
-				"sign",
-				"--key", "/home/dev/modules/mcuboot/root-ec-p256.pem",
-				"--header-size", "0x200",
-				"--align", "4",
-				"--slot-size", "0x40000",
-				"--version", "1.0.0",
-				"--pad-header",
-				"/home/dev/test.bin",
-				"/home/dev/build/signed_app.bin"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/build"
-			},
-			"group": "build",
-			"detail": "Подписывает test.bin и сохраняет как build/signed_app.bin"
-		},
-		{
 			"label": "2. Flash Signed App (J-Link)",
 			"type": "shell",
 			"command": "JLink.exe",
@@ -66,30 +44,7 @@
 			},
 			"group": "build",
 			"detail": "Прошивает signed_app.bin по адресу 0x08040000 через J-Link",
-			"dependsOn": "1. Sign App for MCUboot"
-		},
-
-		{
-			"label": "3. Sign App for MCUboot",
-			"type": "shell",
-			"command": "python",
-			"args": [
-				"${workspaceFolder}/modules/mcuboot/scripts/imgtool.py",
-				"sign",
-				"--key", "modules/mcuboot/root-ec-p256.pem",
-				"--header-size", "0x200",
-				"--align", "4",
-				"--slot-size", "0x40000",
-				"--version", "1.0.1",
-				"--pad-header",
-				"test2.bin",
-				"build/signed_app2.bin"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}"
-			},
-			"group": "build",
-			"detail": "Подписывает test2.bin и сохраняет как build/signed_app2.bin"
+			//"dependsOn": "1. Sign App for MCUboot"
 		},
 		{
 			"label": "4. Flash Signed App (J-Link)",

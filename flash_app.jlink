@@ -1,5 +1,5 @@
 r
 h
-loadbin "build/signed_app.bin", 0x08040000
+loadbin "gas-lighter-fw_signed.bin", 0x08040000
 r
 q
