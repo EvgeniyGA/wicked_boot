@@ -99,7 +99,8 @@
 				"-serial", "mon:stdio",
 				"-gdb", "tcp::1234", "-S",        
 				"-kernel", "${command:cmake.launchTargetPath}",
-				"-device", "loader,file=/home/dev/gas-lighter-fw_signed.bin,addr=0x08040000,force-raw=on"
+				"-device", "loader,file=/home/dev/gas-lighter-fw_signed.bin,addr=0x08040000,force-raw=on",
+				"-device", "loader,file=/home/dev/gas-lighter-fw_signed-nextv.bin,addr=0x08080000,force-raw=on"
 			],
 			"isBackground": true,
 			"problemMatcher": {
@@ -117,8 +118,8 @@
 				"-nographic", 
 				"-serial", "mon:stdio",     
 				"-kernel", "${command:cmake.launchTargetPath}",
-				//"-device", "loader,file=/home/dev/gas-lighter-fw_signed.bin,addr=0x08040000"
-				"-device", "loader,file=/home/dev/gas-lighter-fw_signed.bin,addr=0x08040000,force-raw=on"
+				"-device", "loader,file=/home/dev/gas-lighter-fw_signed.bin,addr=0x08040000,force-raw=on",
+				"-device", "loader,file=/home/dev/gas-lighter-fw_signed-nextv.bin,addr=0x08080000,force-raw=on"
 			],
 			"isBackground": true,
 			"problemMatcher": {
