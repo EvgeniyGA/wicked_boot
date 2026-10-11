@@ -29,7 +29,7 @@
 			"detail": "Flash STM32F4 (j-link)."
 		},
 		{
-			"label": "2. Flash Signed App (J-Link)",
+			"label": "Flash Signed App Slot1 (J-Link)",
 			"type": "shell",
 			"command": "JLink.exe",
 			"args": [
@@ -37,7 +37,7 @@
 				"-if", "SWD",
 				"-speed", "4000",
 				"-NoGui", "1",
-				"-CommandFile", "flash_app.jlink"
+				"-CommandFile", "flash_app_slot1.jlink"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
@@ -47,7 +47,7 @@
 			//"dependsOn": "1. Sign App for MCUboot"
 		},
 		{
-			"label": "4. Flash Signed App (J-Link)",
+			"label": "Flash Signed App Slot2 (J-Link)",
 			"type": "shell",
 			"command": "JLink.exe",
 			"args": [
@@ -55,14 +55,14 @@
 				"-if", "SWD",
 				"-speed", "4000",
 				"-NoGui", "1",
-				"-CommandFile", "flash_app2.jlink"
+				"-CommandFile", "flash_app_slot2.jlink"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
 			"group": "build",
 			"detail": "Прошивает signed_app2.bin по адресу 0x08080000 через J-Link",
-			"dependsOn": "3. Sign App for MCUboot"
+			//"dependsOn": "3. Sign App for MCUboot"
 		},
 
 		{

@@ -1,0 +1,5 @@
+r
+h
+loadbin "samples/gas-lighter-fw_signed.bin", 0x08040000
+r
+q
