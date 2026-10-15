@@ -21,13 +21,15 @@ target_include_directories(tinycrypt PUBLIC
 target_link_libraries(bootutil PUBLIC 
     tinycrypt
     mbedtls_asn1
+    STM32_Drivers
 )
 
 add_library(mcuboot_support STATIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/flash_map.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/mcuboot_port.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ecdsa_pub_key.c
     ${CMAKE_SOURCE_DIR}/modules/mcuboot/boot/mbed/app_enc_keys.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/flash_map_legacy.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/flash_map_extended.c
 )
 
 target_include_directories(mcuboot_support PUBLIC 
@@ -35,10 +37,11 @@ target_include_directories(mcuboot_support PUBLIC
 )
 
 target_link_libraries(mcuboot_support PUBLIC 
-    STM32_Drivers
     bootutil
+    STM32_Drivers
 )
 
 target_include_directories(bootutil PUBLIC 
     ${CMAKE_SOURCE_DIR}/support/mcuboot_support/include
+    ${CMAKE_SOURCE_DIR}/modules/mcuboot/boot/bootutil/src/
 )

@@ -15,11 +15,14 @@
 extern "C" {
 #endif
 
+#include "Driver_Flash.h"
+
 # define FLASH_DEVICE_INTERNAL_FLASH 0
 
 //! NB: MCUBoot expects this define to exist but it's only used
 //! if MCUBOOT_SWAP_USING_SCRATCH is defined
 # define FLASH_AREA_IMAGE_SCRATCH FLASH_SLOT_DOES_NOT_EXIST
+//#define FLASH_AREA_IMAGE_SCRATCH      3
 
 //! An arbitrarily high slot ID we will use to indicate that
 //! there is not slot
@@ -32,6 +35,7 @@ extern "C" {
 //! given an image_index. We'll plan to use
 # define FLASH_AREA_IMAGE_PRIMARY(i) ((i == 0) ? 1 : 255)
 # define FLASH_AREA_IMAGE_SECONDARY(i) ((i == 0) ? 2 : 255)
+
 
 #ifdef __cplusplus
 }

@@ -42,10 +42,11 @@ add_subdirectory(app)
 
 target_link_libraries(${MAIN_EXECUTABLE} 
     segger_rtt         
-    bsp_drivers
+    
     app_version
     bootutil
     mcuboot_support
+    bsp_drivers
 )
 
 find_program(CMAKE_OBJCOPY NAMES arm-none-eabi-objcopy REQUIRED)

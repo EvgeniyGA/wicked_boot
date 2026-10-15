@@ -14,6 +14,9 @@ if(${TARGET} STREQUAL "stm32f4")
 set(BSP_SOURCES
 #    ${TARGET}/Core/Src/gpio_driver.c
     ${TARGET}/Core/Src/W25Qxx.c
+    ${TARGET}/Core/Src/Driver_Flash.c
+    ${TARGET}/Core/Src/Driver_Usart.c
+    ${TARGET}/Core/Src/boot_hal.c
 #    ${TARGET}/Core/Src/common.c
     ${TARGET}/Core/Src/lcd_driver.c
 )
@@ -29,6 +32,7 @@ add_library(bsp_drivers STATIC
 
 target_link_libraries(bsp_drivers PUBLIC 
     stm32cubemx
+    bootutil
 )
 
 target_include_directories(bsp_drivers PUBLIC 

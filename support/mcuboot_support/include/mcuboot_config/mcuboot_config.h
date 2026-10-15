@@ -7,10 +7,17 @@
 
 #pragma once
 
+#ifndef __WEAK
+#define __WEAK __attribute__((__weak))
+#endif
+
+#ifndef __NO_RETURN
+#define __NO_RETURN __attribute__((noreturn))
+#endif
+
+#define FLASH_AREA_IMAGE_SECTOR_SIZE (1024*128)
+
 #define MCUBOOT_USE_FLASH_AREA_GET_SECTORS 1
-
-
-#define MCUBOOT_LOG_LEVEL 4 
 
 // When there isn't a valid primary, use secondary
 #define MCUBOOT_BOOTSTRAP 1
@@ -41,7 +48,7 @@
  */
 
 /* Uncomment to enable the overwrite-only code path. */
- #define MCUBOOT_OVERWRITE_ONLY 1 
+#define MCUBOOT_OVERWRITE_ONLY 1 
 
 #ifdef MCUBOOT_OVERWRITE_ONLY
 /* Uncomment to only erase and overwrite those primary slot sectors needed
@@ -102,7 +109,7 @@
 /* Uncomment if your platform has its own mcuboot_config/mcuboot_assert.h.
  * If so, it must provide an ASSERT macro for use by bootutil. Otherwise,
  * "assert" is used. */
-#define MCUBOOT_HAVE_ASSERT_H 1
+//#define MCUBOOT_HAVE_ASSERT_H 1
 
 /*
  * Watchdog feeding
@@ -110,6 +117,5 @@
 
 #define MCUBOOT_WATCHDOG_FEED()
 
-// for STM32F407:
-#define MCUBOOT_BOOT_MAX_ALIGN 8   // Требуется для SWAP-режимов ???
-#define MCUBOOT_FLASH_ALIGN 4      // Реальное выравнивание записи флеша F4 ???
+#define MCUBOOT_BOOT_MAX_ALIGN  8 
+#define MCUBOOT_FLASH_ALIGN     4
