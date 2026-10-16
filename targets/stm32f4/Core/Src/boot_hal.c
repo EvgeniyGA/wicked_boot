@@ -8,7 +8,7 @@ void boot_platform_quit(struct boot_arm_vector_table *vt)
 {
     __disable_irq();
 
-    // HAL_DeInit(); // Можно раскомментировать, но иногда это ломает отладку по SWD
+    // HAL_DeInit();
     
     NVIC->ICER[0] = 0xFFFFFFFF;
     NVIC->ICER[1] = 0xFFFFFFFF;
@@ -31,13 +31,10 @@ void boot_platform_quit(struct boot_arm_vector_table *vt)
 
     __set_MSP(vt->msp);
 
-    // 9. Приводим адрес к типу функции и вызываем её (прыжок в приложение)
-    // Использование volatile и явного приведения типов предотвращает оптимизации компилятора
     void (*app_entry)(void) = (void (*)(void))vt->reset;
     
     app_entry();
 
-    // 10. На случай, если приложение вернет управление (чего быть не должно)
     while (1) {
         __NOP();
     }

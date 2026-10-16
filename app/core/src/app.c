@@ -84,7 +84,8 @@ void setup(void){
     printf("\n\r==Starting Bootloader==\n\r");
 	printf("Bootloader version: %s\n", FW_VERSION_STR);
 	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
-	printf("Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
+	printf("Bootloader Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
+    //printf("Based on mcuBoot %d.%d.%d\n", MCUBOOT_VERION_MAJOR, MCUBOOT_VERION_MINOR;
 
 	if (is_hash_invalid(FW_GIT_HASH)) {
 		printf("ERROR: Invalid firmware hash detected: %s\r\n", FW_GIT_HASH ? FW_GIT_HASH : "NULL");

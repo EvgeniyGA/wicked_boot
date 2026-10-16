@@ -7,7 +7,7 @@
 
 #define SHELL_RX_BUFFER_SIZE (256)
 #define SHELL_MAX_ARGS (16)
-#define SHELL_PROMPT "shell> "
+#define SHELL_PROMPT "bl> "
 
 #define SHELL_FOR_EACH_COMMAND(command) \
   for (const sShellCommand *command = g_shell_commands; \
