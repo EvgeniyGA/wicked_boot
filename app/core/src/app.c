@@ -156,12 +156,12 @@ void emergency_cli(void){
 
 // Invoked when device is mounted
 void tud_mount_cb(void) {
-  //blink_interval_ms = BLINK_MOUNTED;
+  printf("usb mount\r\n");//blink_interval_ms = BLINK_MOUNTED;
 }
 
 // Invoked when device is unmounted
 void tud_umount_cb(void) {
-  //blink_interval_ms = BLINK_NOT_MOUNTED;
+  printf("usb unmount\r\n");//blink_interval_ms = BLINK_NOT_MOUNTED;
 }
 
 // Invoked when usb bus is suspended
@@ -169,12 +169,12 @@ void tud_umount_cb(void) {
 // Within 7ms, device must draw an average of current less than 2.5 mA from bus
 void tud_suspend_cb(bool remote_wakeup_en) {
   (void)remote_wakeup_en;
-  //blink_interval_ms = BLINK_SUSPENDED;
+  printf("usb suspend\r\n");//blink_interval_ms = BLINK_SUSPENDED;
 }
 
 // Invoked when usb bus is resumed
 void tud_resume_cb(void) {
-  //blink_interval_ms = tud_mounted() ? BLINK_MOUNTED : BLINK_NOT_MOUNTED;
+  printf("usb resume\r\n");//blink_interval_ms = tud_mounted() ? BLINK_MOUNTED : BLINK_NOT_MOUNTED;
 }
 
 //--------------------------------------------------------------------+
@@ -205,17 +205,41 @@ uint32_t tud_dfu_get_timeout_cb(uint8_t alt, uint8_t state) {
 // This callback could be returned before flashing op is complete (async).
 // Once finished flashing, application must call tud_dfu_finish_flashing()
 void tud_dfu_download_cb(uint8_t alt, uint16_t block_num, const uint8_t *data, uint16_t length) {
-  (void)alt;
-  (void)block_num;
+    (void)alt;
+    (void)block_num;
+    static uint32_t last_erased_sector = 0xFFFFFFFF;
 
-  //printf("\r\nReceived Alt %u BlockNum %u of length %u\r\n", alt, wBlockNum, length);
+    printf("\r\nReceived Alt %u BlockNum %u of length %u\r\n", alt, block_num, length);
 
-  for (uint16_t i = 0; i < length; i++) {
-    printf("%c", data[i]);
-  }
+    uint32_t current_addr = 0x80000 + ((uint32_t)block_num * length);
+    
+    uint32_t current_sector = GetSectorFromAddress(0x8000000 + current_addr);
 
-  // flashing op for download complete without error
-  tud_dfu_finish_flashing(DFU_STATUS_OK);
+    if ((current_sector != last_erased_sector) && (length == 64)) {
+        printf("\r\n[DFU] >>> Erasing Sector %u at 0x%08lX...\r\n", current_sector, current_addr);
+        
+        if (Driver_FLASH0.EraseSector(current_addr) != ARM_DRIVER_OK) {
+            printf("[DFU] >>> Erase FAILED!\r\n");
+            tud_dfu_finish_flashing(DFU_STATUS_ERR_ERASE);
+            return;
+        }
+        
+        last_erased_sector = current_sector;
+        printf("[DFU] >>> Erase OK. Starting programming...\r\n");
+    }
+
+    if (Driver_FLASH0.ProgramData(current_addr, data, length) != ARM_DRIVER_OK) {
+        printf("[DFU] Program FAILED at 0x%08lX!\r\n", current_addr);
+        tud_dfu_finish_flashing(DFU_STATUS_ERR_WRITE);
+        return;
+    }
+
+    //for (uint16_t i = 0; i < length; i++) {
+    //  printf("%c", data[i]);
+    //}
+
+    // flashing op for download complete without error
+    tud_dfu_finish_flashing(DFU_STATUS_OK);
 }
 
 // Invoked when download process is complete, received DFU_DNLOAD (wLength=0) following by DFU_GETSTATUS (state=Manifest)
@@ -223,6 +247,10 @@ void tud_dfu_download_cb(uint8_t alt, uint16_t block_num, const uint8_t *data, u
 // Once finished flashing, application must call tud_dfu_finish_flashing()
 void tud_dfu_manifest_cb(uint8_t alt) {
   (void)alt;
+    const int permanent = 0;
+  boot_set_pending(permanent);
+  NVIC_SystemReset();
+
   printf("Download completed, enter manifestation\r\n");
 
   // flashing op for manifest is complete without error

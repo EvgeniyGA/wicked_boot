@@ -9,7 +9,7 @@ static ARM_FLASH_CAPABILITIES DriverCapabilities = {
     .event_ready = 1, .data_width = 2//4 // 32-bit (4 bytes) programming
 };
 
-static uint32_t GetSectorFromAddress(uint32_t Address) {
+/*static*/ uint32_t GetSectorFromAddress(uint32_t Address) {
     if (Address < 0x08000000 || Address >= 0x08100000) {
         return 0xFF;
     }
