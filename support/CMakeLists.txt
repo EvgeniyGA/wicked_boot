@@ -1,2 +1,3 @@
 add_subdirectory(RTT)
 add_subdirectory(mcuboot_support)
+add_subdirectory(tinyusb)

@@ -42,7 +42,7 @@ add_subdirectory(app)
 
 target_link_libraries(${MAIN_EXECUTABLE} 
     segger_rtt         
-    
+    tinyusb_support
     app_version
     bootutil
     mcuboot_support

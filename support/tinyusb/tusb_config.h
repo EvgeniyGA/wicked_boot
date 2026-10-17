@@ -30,7 +30,7 @@
  extern "C" {
 #endif
 
-#include "diskio_config.h"
+//#include "diskio_config.h"
 //--------------------------------------------------------------------+
 // Board Specific Configuration
 //--------------------------------------------------------------------+
@@ -104,25 +104,15 @@
 #endif
 
 //------------- CLASS -------------//
-#define CFG_TUD_CDC              1
-#define CFG_TUD_MSC              1
+#define CFG_TUD_DFU              1
+#define CFG_TUD_CDC              0
+#define CFG_TUD_MSC              0
 #define CFG_TUD_HID              0
 #define CFG_TUD_MIDI             0
 #define CFG_TUD_VENDOR           0
 
-#define CFG_TUD_CDC_NOTIFY        1 // Enable use of notification endpoint
-
-// CDC FIFO size of TX and RX
-#define CFG_TUD_CDC_RX_BUFSIZE   (TUD_OPT_HIGH_SPEED ? 512 : 64)
-#define CFG_TUD_CDC_TX_BUFSIZE   (TUD_OPT_HIGH_SPEED ? 512 : 64)
-
-// CDC Endpoint transfer buffer size, default to max bulk packet size (HS 512, FS 64). Larger is faster.
-// Larger RX_EPSIZE requires CFG_TUD_CDC_RX_NEED_ZLP = 1 and host ZLP support
-#define CFG_TUD_CDC_RX_EPSIZE  (TUD_OPT_HIGH_SPEED ? 512 : 64)
-#define CFG_TUD_CDC_TX_EPSIZE  (TUD_OPT_HIGH_SPEED ? 512 : 64)
-
-// MSC Buffer size of Device Mass storage
-#define CFG_TUD_MSC_EP_BUFSIZE   DISK_BLOCK_SIZE
+// DFU buffer size, it has to be set to the buffer size used in TUD_DFU_DESCRIPTOR
+#define CFG_TUD_DFU_XFER_BUFSIZE  (TUD_OPT_HIGH_SPEED ? 512 : 64)
 
 #ifdef __cplusplus
  }

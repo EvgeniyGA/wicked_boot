@@ -17,7 +17,7 @@ set(BSP_SOURCES
     ${TARGET}/Core/Src/Driver_Flash.c
     ${TARGET}/Core/Src/Driver_Usart.c
     ${TARGET}/Core/Src/boot_hal.c
-#    ${TARGET}/Core/Src/common.c
+    ${TARGET}/Core/Src/common.c
     ${TARGET}/Core/Src/lcd_driver.c
 )
 else()

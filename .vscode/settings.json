@@ -15,7 +15,7 @@
         "**/modules": true,
     },
     "files.exclude": {
-        "**/modules": true,
+        "**/modules": false,
         "**/.git": true,
         "**/.DS_Store": true,
     }
