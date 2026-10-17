@@ -21,18 +21,6 @@
     #include "lcd_driver.h"
 #endif
 
-/*int console_putc(char c) {
-  HAL_StatusTypeDef status = HAL_UART_Transmit(&huart1, (uint8_t*)&c, 1, HAL_MAX_DELAY);
-  return 1;
-}
-
-char console_getc(void) {
-    uint8_t cr = -1;
-    uint32_t timeout = 0x2FFFFF;
-    while((timeout--) && (HAL_UART_Receive(&huart1, &cr, 1, 0) != HAL_OK));
-    return (char)cr;
-}*/
-
 void init(void){
 }
 
@@ -40,6 +28,8 @@ void My_Delay(uint32_t Delay){
     uint64_t del = Delay*1000;
     while(del--);
 }
+
+static void emergency_cli(void);
 
 static void do_boot(struct boot_rsp *rsp)
 {
@@ -80,18 +70,9 @@ static void do_boot(struct boot_rsp *rsp)
 }
 
 void setup(void){
-    char c;
-    printf("\n\r==Starting Bootloader==\n\r");
-	printf("Bootloader version: %s\n", FW_VERSION_STR);
-	printf("Build: %s %s (git: %s)\n", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
-	printf("Bootloader Version: %d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
-    //printf("Based on mcuBoot %d.%d.%d\n", MCUBOOT_VERION_MAJOR, MCUBOOT_VERION_MINOR;
+    BOOT_LOG_INF("Bootloader Version: %d.%d.%d", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
+	BOOT_LOG_INF("Build: %s %s (git: %s)", FW_BUILD_DATE, FW_BUILD_TIME, FW_GIT_HASH);
 
-	if (is_hash_invalid(FW_GIT_HASH)) {
-		printf("ERROR: Invalid firmware hash detected: %s\r\n", FW_GIT_HASH ? FW_GIT_HASH : "NULL");
-	} else {
-		printf("FW Hash: %s\r\n", FW_GIT_HASH);
-	}
 #ifdef STM32F407xx
     static LCD_HandleTypeDef hlcd1 = {.delay_ms = My_Delay}; //HAL_Delay;
     lcd_printer_msg_t msg;
@@ -104,31 +85,34 @@ void setup(void){
     LCD_SetCursor(&hlcd1, msg.line, msg.offset);
     LCD_SendString(&hlcd1, msg.data);
 #endif
-    BOOT_LOG_INF("Enter any symbol to go CLI:");
-
-    c = console_getc();
-    if((int8_t)c != - 1) goto FAIL;
+    BOOT_LOG_INF("Wait or enter any symbol to go CLI:\n\r");
+    if((int8_t)console_getc() != - 1){
+        emergency_cli();
+    }
     
     struct boot_rsp rsp;
     fih_int fih_rc = FIH_FAILURE;
     FIH_CALL(boot_go, fih_rc, &rsp);
     if (fih_not_eq(fih_rc, FIH_SUCCESS)) {
         BOOT_LOG_ERR("Unable to find bootable image. Falling into CLI:");
-        goto FAIL;//FIH_PANIC;
+        emergency_cli();//FIH_PANIC;
     }
 
-    BOOT_LOG_INF("Bootloader chainload address offset: 0x%x",
-                 (int)rsp.br_image_off);
+    BOOT_LOG_INF("Bootloader chainload address offset: 0x%x", (int)rsp.br_image_off);
     BOOT_LOG_INF("Jumping to the first image slot");
     do_boot(&rsp);
 
-    BOOT_LOG_ERR("Never should get here");
-    FIH_PANIC;
+    BOOT_LOG_ERR("Something came up. Go CLI");
 FAIL:
 #ifdef STM32F407xx
     strcpy(msg.data, " fail");
     LCD_SendString(&hlcd1, msg.data);
 #endif
+    emergency_cli();
+}
+
+void emergency_cli(void){
+    char c = 0;
     sShellImpl shell_impl = { .send_char = console_putc, };
     shell_boot(&shell_impl);
     while (true) {

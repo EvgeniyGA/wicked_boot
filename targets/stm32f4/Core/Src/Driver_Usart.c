@@ -10,7 +10,7 @@ int console_putc(char c) {
 
 char console_getc(void) {
     uint8_t cr = -1;
-    uint32_t timeout = 0x2FFFFF;
+    uint32_t timeout = 0x1FFFFF;
     while((timeout--) && (HAL_UART_Receive(&huart1, &cr, 1, 0) != HAL_OK));
     return (char)cr;
 }
