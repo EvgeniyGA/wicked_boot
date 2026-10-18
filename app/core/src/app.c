@@ -156,12 +156,12 @@ void emergency_cli(void){
 
 // Invoked when device is mounted
 void tud_mount_cb(void) {
-  printf("usb mount\r\n");//blink_interval_ms = BLINK_MOUNTED;
+  BOOT_LOG_INF("usb mount");//blink_interval_ms = BLINK_MOUNTED;
 }
 
 // Invoked when device is unmounted
 void tud_umount_cb(void) {
-  printf("usb unmount\r\n");//blink_interval_ms = BLINK_NOT_MOUNTED;
+  BOOT_LOG_INF("usb unmount");//blink_interval_ms = BLINK_NOT_MOUNTED;
 }
 
 // Invoked when usb bus is suspended
@@ -169,12 +169,12 @@ void tud_umount_cb(void) {
 // Within 7ms, device must draw an average of current less than 2.5 mA from bus
 void tud_suspend_cb(bool remote_wakeup_en) {
   (void)remote_wakeup_en;
-  printf("usb suspend\r\n");//blink_interval_ms = BLINK_SUSPENDED;
+  BOOT_LOG_INF("usb suspend");//blink_interval_ms = BLINK_SUSPENDED;
 }
 
 // Invoked when usb bus is resumed
 void tud_resume_cb(void) {
-  printf("usb resume\r\n");//blink_interval_ms = tud_mounted() ? BLINK_MOUNTED : BLINK_NOT_MOUNTED;
+  BOOT_LOG_INF("usb resume");//blink_interval_ms = tud_mounted() ? BLINK_MOUNTED : BLINK_NOT_MOUNTED;
 }
 
 //--------------------------------------------------------------------+
@@ -208,36 +208,39 @@ void tud_dfu_download_cb(uint8_t alt, uint16_t block_num, const uint8_t *data, u
     (void)alt;
     (void)block_num;
     static uint32_t last_erased_sector = 0xFFFFFFFF;
+    static uint32_t bytes_written = 0;
 
-    printf("\r\nReceived Alt %u BlockNum %u of length %u\r\n", alt, block_num, length);
+    if (block_num == 0) {
+        bytes_written = 0;
+        last_erased_sector = 0xFFFFFFFF;
+    }
 
-    uint32_t current_addr = 0x80000 + ((uint32_t)block_num * length);
-    
+    BOOT_LOG_DBG("Received Alt %u BlockNum %u of length %u", alt, block_num, length);
+
+    uint32_t current_addr = (alt + 1) * 0x40000 + bytes_written;
     uint32_t current_sector = GetSectorFromAddress(0x8000000 + current_addr);
 
-    if ((current_sector != last_erased_sector) && (length == 64)) {
-        printf("\r\n[DFU] >>> Erasing Sector %u at 0x%08lX...\r\n", current_sector, current_addr);
+    if (current_sector != last_erased_sector) {
+        BOOT_LOG_DBG("[DFU] >>> Erasing Sector %u at 0x%08lX...", current_sector, current_addr);
         
         if (Driver_FLASH0.EraseSector(current_addr) != ARM_DRIVER_OK) {
-            printf("[DFU] >>> Erase FAILED!\r\n");
+            BOOT_LOG_ERR("[DFU] >>> Erase FAILED!");
             tud_dfu_finish_flashing(DFU_STATUS_ERR_ERASE);
             return;
         }
         
         last_erased_sector = current_sector;
-        printf("[DFU] >>> Erase OK. Starting programming...\r\n");
+        BOOT_LOG_DBG("[DFU] >>> Erase OK. Starting programming...");
     }
 
     if (Driver_FLASH0.ProgramData(current_addr, data, length) != ARM_DRIVER_OK) {
-        printf("[DFU] Program FAILED at 0x%08lX!\r\n", current_addr);
+        BOOT_LOG_ERR("[DFU] Program FAILED at 0x%08lX!", current_addr);
         tud_dfu_finish_flashing(DFU_STATUS_ERR_WRITE);
         return;
     }
-
-    //for (uint16_t i = 0; i < length; i++) {
-    //  printf("%c", data[i]);
-    //}
-
+    bytes_written += length;
+    printf(".");
+    fflush(stdout); 
     // flashing op for download complete without error
     tud_dfu_finish_flashing(DFU_STATUS_OK);
 }
@@ -246,16 +249,20 @@ void tud_dfu_download_cb(uint8_t alt, uint16_t block_num, const uint8_t *data, u
 // Application can do checksum, or actual flashing if buffered entire image previously.
 // Once finished flashing, application must call tud_dfu_finish_flashing()
 void tud_dfu_manifest_cb(uint8_t alt) {
-  (void)alt;
-    const int permanent = 0;
-  boot_set_pending(permanent);
-  NVIC_SystemReset();
-
-  printf("Download completed, enter manifestation\r\n");
+  const int permanent = 0;
+  printf("\n\r");
+  BOOT_LOG_INF("Download completed, enter manifestation");
 
   // flashing op for manifest is complete without error
   // Application can perform checksum, should it fail, use appropriate status such as errVERIFY.
   tud_dfu_finish_flashing(DFU_STATUS_OK);
+
+  if(alt == 1){
+    BOOT_LOG_INF("Set pending");
+    boot_set_pending(permanent);
+  }
+  BOOT_LOG_INF("reboot\n\r");
+  NVIC_SystemReset();
 }
 
 // Invoked when received DFU_UPLOAD request
@@ -278,10 +285,10 @@ uint16_t tud_dfu_upload_cb(uint8_t alt, uint16_t block_num, uint8_t *data, uint1
 // Invoked when the Host has terminated a download or upload transfer
 void tud_dfu_abort_cb(uint8_t alt) {
   (void)alt;
-  printf("Host aborted transfer\r\n");
+  BOOT_LOG_INF("Host aborted transfer");
 }
 
 // Invoked when a DFU_DETACH request is received
 void tud_dfu_detach_cb(void) {
-  printf("Host detach, we should probably reboot\r\n");
+  BOOT_LOG_INF("Host detach, we should probably reboot");
 }

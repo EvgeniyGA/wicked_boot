@@ -112,7 +112,7 @@
 #define CFG_TUD_VENDOR           0
 
 // DFU buffer size, it has to be set to the buffer size used in TUD_DFU_DESCRIPTOR
-#define CFG_TUD_DFU_XFER_BUFSIZE  64//1024
+#define CFG_TUD_DFU_XFER_BUFSIZE  1024
 
 #ifdef __cplusplus
  }

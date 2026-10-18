@@ -195,8 +195,8 @@ static const char *string_desc_arr[] = {
   "TinyUSB",                  // 1: Manufacturer
   "TinyUSB Device",           // 2: Product
   NULL,                       // 3: Serials will use unique ID if possible
-  "FLASH",                    // 4: DFU Partition 1
-  "EEPROM",                   // 5: DFU Partition 2
+  "Primary Slot",             // 4: DFU Partition 1
+  "Secondary Slot",           // 5: DFU Partition 2
 };
 
 static uint16_t _desc_str[32 + 1];
