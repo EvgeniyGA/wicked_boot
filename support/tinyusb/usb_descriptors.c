@@ -25,6 +25,7 @@
 
 #include "bsp/board_api.h"
 #include "tusb.h"
+#include "usb_descriptors.h"
 
 // Unique PID per example: guarantees re-enumeration on re-flash and a fresh host driver match.
 #define USB_PID           0x400b
@@ -76,11 +77,15 @@ const uint8_t *tud_descriptor_device_cb(void) {
 
 enum {
   ITF_NUM_DFU_MODE,
+  ITF_NUM_VENDOR,
   ITF_NUM_TOTAL
 };
 
-#define CONFIG_TOTAL_LEN (TUD_CONFIG_DESC_LEN + TUD_DFU_DESC_LEN(ALT_COUNT))
+#define CONFIG_TOTAL_LEN (TUD_CONFIG_DESC_LEN + TUD_DFU_DESC_LEN(ALT_COUNT) + TUD_VENDOR_DESC_LEN)
 #define FUNC_ATTRS       (DFU_ATTR_CAN_UPLOAD | DFU_ATTR_CAN_DOWNLOAD | DFU_ATTR_MANIFESTATION_TOLERANT)
+
+  #define EPNUM_VENDOR_OUT  0x03
+  #define EPNUM_VENDOR_IN   0x83
 
 uint8_t const desc_configuration[] = {
   // Config number, interface count, string index, total length, attribute, power in mA
@@ -88,6 +93,9 @@ uint8_t const desc_configuration[] = {
 
   // Interface number, Alternate count, starting string index, attributes, detach timeout, transfer size
   TUD_DFU_DESCRIPTOR(ITF_NUM_DFU_MODE, ALT_COUNT, 4, FUNC_ATTRS, 1000, CFG_TUD_DFU_XFER_BUFSIZE),
+
+  // Interface number, string index, EP Out & IN address, EP size
+  TUD_VENDOR_DESCRIPTOR(ITF_NUM_VENDOR, 5, EPNUM_VENDOR_OUT, 0x80 | EPNUM_VENDOR_IN, TUD_OPT_HIGH_SPEED ? 512 : 64)
 };
 
 // Invoked when received GET CONFIGURATION DESCRIPTOR
@@ -123,6 +131,9 @@ const uint8_t desc_bos[] = {
   // total length, number of device caps
   TUD_BOS_DESCRIPTOR(BOS_TOTAL_LEN, 1),
 
+  // Vendor Code, iLandingPage
+  TUD_BOS_WEBUSB_DESCRIPTOR(VENDOR_REQUEST_WEBUSB, 1),
+
   // Microsoft OS 2.0 descriptor
   TUD_BOS_MS_OS_20_DESCRIPTOR(MS_OS_20_DESC_LEN, 1)};
 
@@ -157,25 +168,25 @@ TU_VERIFY_STATIC(sizeof(desc_ms_os_20) == MS_OS_20_DESC_LEN, "Incorrect size");
 // Invoked when a control transfer occurred on an interface of this class
 // Driver response accordingly to the request and the transfer stage (setup/data/ack)
 // return false to stall control endpoint (e.g unsupported request)
-bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, const tusb_control_request_t *request) {
-  // nothing to with DATA & ACK stage
-  if (stage != CONTROL_STAGE_SETUP) {
-    return true;
-  }
+// bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, const tusb_control_request_t *request) {
+//   // nothing to with DATA & ACK stage
+//   if (stage != CONTROL_STAGE_SETUP) {
+//     return true;
+//   }
 
-  if (request->bmRequestType_bit.type == TUSB_REQ_TYPE_VENDOR) {
-    if (request->bRequest == VENDOR_REQUEST_MICROSOFT) {
-      if (request->wIndex == 7) {
-        return tud_control_xfer(rhport, request, (void *)(uintptr_t)desc_ms_os_20, MS_OS_20_DESC_LEN);
-      } else {
-        return false;
-      }
-    }
-  }
+//   if (request->bmRequestType_bit.type == TUSB_REQ_TYPE_VENDOR) {
+//     if (request->bRequest == VENDOR_REQUEST_MICROSOFT) {
+//       if (request->wIndex == 7) {
+//         return tud_control_xfer(rhport, request, (void *)(uintptr_t)desc_ms_os_20, MS_OS_20_DESC_LEN);
+//       } else {
+//         return false;
+//       }
+//     }
+//   }
 
-  // stall unknown request
-  return false;
-}
+//   // stall unknown request
+//   return false;
+// }
 
 //--------------------------------------------------------------------+
 // String Descriptors
@@ -197,6 +208,7 @@ static const char *string_desc_arr[] = {
   NULL,                       // 3: Serials will use unique ID if possible
   "Primary Slot",             // 4: DFU Partition 1
   "Secondary Slot",           // 5: DFU Partition 2
+  "TinyUSB WebUSB"            // 6: Vendor Interface
 };
 
 static uint16_t _desc_str[32 + 1];

@@ -8,8 +8,10 @@ extern "C"
 {
 #endif
 
+#define CONSOLE_GETCH_TIMEOUT   0x1FFFFFUL
+
 int console_putc(char c);
-char console_getc(void);
+char console_getc(uint32_t timeout);
 
 #ifdef  __cplusplus
 }
