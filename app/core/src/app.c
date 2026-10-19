@@ -295,6 +295,7 @@ void tud_dfu_detach_cb(void) {
 }
 //--------------------------------------------------------------------+
 #define URL  "example.tinyusb.org/webusb-serial/index.html"
+//#define WEBUSB_URL "devanlai.github.io/webdfu/"
 
 const tusb_desc_webusb_url_t desc_url = {
   .bLength         = 3 + sizeof(URL) - 1,
