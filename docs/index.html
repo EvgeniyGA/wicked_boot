@@ -2,19 +2,70 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebUSB LED Control</title>
     <style>
-        body { font-family: system-ui, sans-serif; max-width: 500px; margin: 40px auto; text-align: center; }
-        .btn { padding: 12px 24px; font-size: 16px; cursor: pointer; margin: 10px; border: none; border-radius: 5px; }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            max-width: 500px; 
+            margin: 40px auto; 
+            padding: 20px;
+            text-align: center; 
+        }
+        h2 { color: #333; }
+        .btn { 
+            padding: 12px 24px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            margin: 10px; 
+            border: none; 
+            border-radius: 5px; 
+            transition: opacity 0.2s;
+        }
+        .btn:hover:not(:disabled) { opacity: 0.8; }
         .btn-connect { background: #2196F3; color: white; }
         .btn-on { background: #4CAF50; color: white; }
         .btn-off { background: #f44336; color: white; }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
-        #log { background: #1e1e1e; color: #0f0; padding: 15px; border-radius: 5px; text-align: left; font-family: monospace; min-height: 100px; }
+        .btn:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+            opacity: 0.6;
+        }
+        #log { 
+            background: #1e1e1e; 
+            color: #0f0; 
+            padding: 15px; 
+            border-radius: 5px; 
+            text-align: left; 
+            font-family: 'Courier New', monospace; 
+            min-height: 100px; 
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
     <h2>💡 WebUSB LED Control</h2>
+    
+    <!-- Контейнер для предупреждения о неподдерживаемом браузере -->
+    <div id="browserWarning" class="warning" style="display: none;">
+        <strong>⚠️ Ваш браузер не поддерживает WebUSB!</strong><br>
+        Пожалуйста, используйте:<br>
+        • Google Chrome<br>
+        • Microsoft Edge<br>
+        • Brave<br>
+        • Opera<br><br>
+        Safari и Firefox не поддерживают эту технологию.
+    </div>
     
     <button id="connectBtn" class="btn btn-connect">1. Подключить устройство</button>
     <br>
@@ -24,39 +75,83 @@
     <div id="log">Ожидание подключения...</div>
 
     <script>
+        // === ПРОВЕРКА ПОДДЕРЖКИ WEBUSB ===
+        if (!('usb' in navigator)) {
+            // Показываем предупреждение
+            document.getElementById('browserWarning').style.display = 'block';
+            
+            // Блокируем все кнопки
+            document.getElementById('connectBtn').disabled = true;
+            document.getElementById('ledOnBtn').disabled = true;
+            document.getElementById('ledOffBtn').disabled = true;
+            
+            // Обновляем лог
+            document.getElementById('log').textContent = 
+                "❌ Ваш браузер не поддерживает WebUSB.\n" +
+                "Используйте Google Chrome, Microsoft Edge или Brave.";
+            
+            // Останавливаем выполнение скрипта
+            throw new Error("WebUSB not supported");
+        }
+
+        // === КОНФИГУРАЦИЯ ===
         // Твои VID и PID из usb_descriptors.c
         const VID = 0xCAFE;
         const PID = 0x400B;
-        const INTERFACE_NUM = 1; // Номер Vendor интерфейса (если он второй после DFU, или 0, если он единственный)
+        const INTERFACE_NUM = 1; // Номер Vendor интерфейса
 
         let device = null;
 
+        // === ФУНКЦИЯ ЛОГИРОВАНИЯ ===
         function log(msg) {
-            document.getElementById('log').textContent += msg + '\n';
+            const logEl = document.getElementById('log');
+            logEl.textContent += msg + '\n';
+            logEl.scrollTop = logEl.scrollHeight; // Автопрокрутка вниз
         }
 
-        // 1. ПОДКЛЮЧЕНИЕ
+        // === 1. ПОДКЛЮЧЕНИЕ УСТРОЙСТВА ===
         document.getElementById('connectBtn').onclick = async () => {
             try {
                 log("🔍 Запрос устройства...");
-                device = await navigator.usb.requestDevice({ filters: [{ vendorId: VID, productId: PID }] });
                 
+                // Открываем системное окно выбора USB
+                device = await navigator.usb.requestDevice({ 
+                    filters: [{ vendorId: VID, productId: PID }] 
+                });
+                
+                log(`✅ Найдено устройство: ${device.productName || 'Unknown'}`);
+                
+                // Инициализация USB
                 await device.open();
-                await device.selectConfiguration(1);
-                await device.claimInterface(INTERFACE_NUM); // Захватываем Vendor интерфейс
+                log("📂 Устройство открыто");
                 
-                log("✅ Устройство подключено!");
+                await device.selectConfiguration(1);
+                log("⚙️ Конфигурация выбрана");
+                
+                await device.claimInterface(INTERFACE_NUM);
+                log(`🔓 Интерфейс ${INTERFACE_NUM} захвачен`);
+                
+                log("✅ Устройство готово к работе!");
+                
+                // Разблокируем кнопки управления LED
                 document.getElementById('ledOnBtn').disabled = false;
                 document.getElementById('ledOffBtn').disabled = false;
+                
             } catch (err) {
-                log("❌ Ошибка: " + err.message);
+                log("❌ Ошибка подключения: " + err.message);
             }
         };
 
-        // 2. ОТПРАВКА КОМАНДЫ НА МИКРОКОНТРОЛЛЕР
+        // === 2. ОТПРАВКА КОМАНД НА МИКРОКОНТРОЛЛЕР ===
         async function sendLedCommand(commandCode) {
-            if (!device) return;
+            if (!device) {
+                log("❌ Устройство не подключено!");
+                return;
+            }
+            
             try {
+                log(`📤 Отправка команды ${commandCode === 0x01 ? 'ON' : 'OFF'}...`);
+                
                 // Отправляем Vendor Control Transfer
                 await device.controlTransferOut({
                     requestType: 'vendor',      // Кастомный запрос
@@ -65,14 +160,21 @@
                     value: 0,
                     index: INTERFACE_NUM        // Номер интерфейса
                 });
-                log(`✅ Команда ${commandCode === 1 ? 'ON' : 'OFF'} отправлена`);
+                
+                log(`✅ Команда ${commandCode === 0x01 ? 'ВКЛЮЧЕНИЯ' : 'ВЫКЛЮЧЕНИЯ'} отправлена`);
+                
             } catch (err) {
                 log("❌ Ошибка отправки: " + err.message);
             }
         }
 
+        // === ОБРАБОТЧИКИ КНОПОК ===
         document.getElementById('ledOnBtn').onclick = () => sendLedCommand(0x01);
         document.getElementById('ledOffBtn').onclick = () => sendLedCommand(0x02);
+
+        // === НАЧАЛЬНОЕ СООБЩЕНИЕ ===
+        log("✅ WebUSB поддерживается вашим браузером");
+        log("👆 Нажмите 'Подключить устройство' для начала");
     </script>
 </body>
 </html>
