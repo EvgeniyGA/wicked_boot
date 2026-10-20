@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>WebUSB LED Control</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 500px; margin: 40px auto; text-align: center; }
+        .btn { padding: 12px 24px; font-size: 16px; cursor: pointer; margin: 10px; border: none; border-radius: 5px; }
+        .btn-connect { background: #2196F3; color: white; }
+        .btn-on { background: #4CAF50; color: white; }
+        .btn-off { background: #f44336; color: white; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        #log { background: #1e1e1e; color: #0f0; padding: 15px; border-radius: 5px; text-align: left; font-family: monospace; min-height: 100px; }
+    </style>
+</head>
+<body>
+    <h2>💡 WebUSB LED Control</h2>
+    
+    <button id="connectBtn" class="btn btn-connect">1. Подключить устройство</button>
+    <br>
+    <button id="ledOnBtn" class="btn btn-on" disabled>Включить LED</button>
+    <button id="ledOffBtn" class="btn btn-off" disabled>Выключить LED</button>
+
+    <div id="log">Ожидание подключения...</div>
+
+    <script>
+        // Твои VID и PID из usb_descriptors.c
+        const VID = 0xCAFE;
+        const PID = 0x400B;
+        const INTERFACE_NUM = 1; // Номер Vendor интерфейса (если он второй после DFU, или 0, если он единственный)
+
+        let device = null;
+
+        function log(msg) {
+            document.getElementById('log').textContent += msg + '\n';
+        }
+
+        // 1. ПОДКЛЮЧЕНИЕ
+        document.getElementById('connectBtn').onclick = async () => {
+            try {
+                log("🔍 Запрос устройства...");
+                device = await navigator.usb.requestDevice({ filters: [{ vendorId: VID, productId: PID }] });
+                
+                await device.open();
+                await device.selectConfiguration(1);
+                await device.claimInterface(INTERFACE_NUM); // Захватываем Vendor интерфейс
+                
+                log("✅ Устройство подключено!");
+                document.getElementById('ledOnBtn').disabled = false;
+                document.getElementById('ledOffBtn').disabled = false;
+            } catch (err) {
+                log("❌ Ошибка: " + err.message);
+            }
+        };
+
+        // 2. ОТПРАВКА КОМАНДЫ НА МИКРОКОНТРОЛЛЕР
+        async function sendLedCommand(commandCode) {
+            if (!device) return;
+            try {
+                // Отправляем Vendor Control Transfer
+                await device.controlTransferOut({
+                    requestType: 'vendor',      // Кастомный запрос
+                    recipient: 'interface',     // Адресуем интерфейсу
+                    request: commandCode,       // 0x01 = ON, 0x02 = OFF
+                    value: 0,
+                    index: INTERFACE_NUM        // Номер интерфейса
+                });
+                log(`✅ Команда ${commandCode === 1 ? 'ON' : 'OFF'} отправлена`);
+            } catch (err) {
+                log("❌ Ошибка отправки: " + err.message);
+            }
+        }
+
+        document.getElementById('ledOnBtn').onclick = () => sendLedCommand(0x01);
+        document.getElementById('ledOffBtn').onclick = () => sendLedCommand(0x02);
+    </script>
+</body>
+</html>
