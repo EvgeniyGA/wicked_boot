@@ -329,11 +329,11 @@ bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_requ
         case VENDOR_REQUEST_MICROSOFT:
           if (request->wIndex == 7) {
             // Get Microsoft OS 2.0 compatible descriptor
-            uint16_t total_len;
-            memcpy(&total_len, desc_ms_os_20 + 8, 2);
+            //uint16_t total_len;
+            //memcpy(&total_len, desc_ms_os_20 + 8, 2);
             
-            return tud_control_xfer(rhport, request, (void*)(uintptr_t)desc_ms_os_20, total_len);
-            //return tud_control_xfer(rhport, request, (void*)(uintptr_t)desc_ms_os_20, 0xB2/*MS_OS_20_DESC_LEN*/);
+            //return tud_control_xfer(rhport, request, (void*)(uintptr_t)desc_ms_os_20, total_len);
+            return tud_control_xfer(rhport, request, (void*)(uintptr_t)desc_ms_os_20, 0x152/*MS_OS_20_DESC_LEN*/);
 
           } else {
             return false;
@@ -382,8 +382,9 @@ void tud_vendor_rx_cb(uint8_t idx, const uint8_t *buffer, uint16_t bufsize) {
     uint8_t        buf[64];
     const uint32_t count = tud_vendor_read(buf, sizeof(buf));
     for(int i = 0; i < count; i++){
-        printf("%d ", buf[i]);
+        printf("%c ", buf[i]);
     }
+    printf("\n\r");
     //echo_all(buf, count);
   }
 }
