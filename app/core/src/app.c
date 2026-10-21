@@ -385,6 +385,8 @@ void tud_vendor_rx_cb(uint8_t idx, const uint8_t *buffer, uint16_t bufsize) {
         printf("%c ", buf[i]);
     }
     printf("\n\r");
-    //echo_all(buf, count);
+    
+    tud_vendor_write(buf, count);
+    tud_vendor_write_flush();
   }
 }
