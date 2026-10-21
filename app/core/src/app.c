@@ -331,8 +331,10 @@ bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_requ
             // Get Microsoft OS 2.0 compatible descriptor
             uint16_t total_len;
             memcpy(&total_len, desc_ms_os_20 + 8, 2);
-
+            
             return tud_control_xfer(rhport, request, (void*)(uintptr_t)desc_ms_os_20, total_len);
+            //return tud_control_xfer(rhport, request, (void*)(uintptr_t)desc_ms_os_20, 0xB2/*MS_OS_20_DESC_LEN*/);
+
           } else {
             return false;
           }
