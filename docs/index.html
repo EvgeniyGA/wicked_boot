@@ -34,7 +34,7 @@
     <p>
       <span id="status"></span>
     </p>
-    <p style="display: none;"></p>
+    <p style="display: none;">
       <label for="vid">Vendor ID (hex):</label>
       <input list="vendor_ids" type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}"/>
       <datalist id="vendor_ids">
@@ -71,7 +71,6 @@
           <input type="number" name="dfuseUploadSize" id="dfuseUploadSize" min="1"/>
         </div>
       
-        <legend>DFU mode</legend>
         <fieldset>
           <legend>Firmware Download (write to USB device)</legend>
           <p>
