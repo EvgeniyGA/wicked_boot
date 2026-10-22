@@ -504,23 +504,37 @@ var device = null;
                         } else if (interfaces.length == 1) {
                             await fixInterfaceNames(selectedDevice, interfaces);
                             device = await connect(new dfu.Device(selectedDevice, interfaces[0]));
-                        } else {
+                        } 
+                        else {
+                            // await fixInterfaceNames(selectedDevice, interfaces);
+                            // populateInterfaceList(interfaceForm, selectedDevice, interfaces);
+                            // async function connectToSelectedInterface() {
+                            //     interfaceForm.removeEventListener('submit', this);
+                            //     const index = interfaceForm.elements["interfaceIndex"].value;
+                            //     device = await connect(new dfu.Device(selectedDevice, interfaces[index]));
+                            // }
+
+                            // interfaceForm.addEventListener('submit', connectToSelectedInterface);
+
+                            // interfaceDialog.addEventListener('cancel', function () {
+                            //     interfaceDialog.removeEventListener('cancel', this);
+                            //     interfaceForm.removeEventListener('submit', connectToSelectedInterface);
+                            // });
+
+                            //interfaceDialog.showModal();
+
                             await fixInterfaceNames(selectedDevice, interfaces);
-                            populateInterfaceList(interfaceForm, selectedDevice, interfaces);
-                            async function connectToSelectedInterface() {
-                                interfaceForm.removeEventListener('submit', this);
-                                const index = interfaceForm.elements["interfaceIndex"].value;
-                                device = await connect(new dfu.Device(selectedDevice, interfaces[index]));
+                        
+                            const targetAlt = 1;
+                            const chosenInterface = interfaces.find(intf => intf.alternate.alternateSetting === targetAlt);
+
+                            if (chosenInterface) {
+                                console.log(`[Wicked Boot] Автоматически выбран интерфейс с alt=${targetAlt}`);
+                                device = await connect(new dfu.Device(selectedDevice, chosenInterface));
+                            } else {
+                                console.warn(`[Wicked Boot] Интерфейс с alt=${targetAlt} не найден, используется первый доступный.`);
+                                device = await connect(new dfu.Device(selectedDevice, interfaces[0]));
                             }
-
-                            interfaceForm.addEventListener('submit', connectToSelectedInterface);
-
-                            interfaceDialog.addEventListener('cancel', function () {
-                                interfaceDialog.removeEventListener('cancel', this);
-                                interfaceForm.removeEventListener('submit', connectToSelectedInterface);
-                            });
-
-                            interfaceDialog.showModal();
                         }
                     }
                 ).catch(error => {
