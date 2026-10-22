@@ -426,74 +426,78 @@ var device = null;
             return device;
         }
 
-        // function autoConnect(vid, serial) {
-        //     dfu.findAllDfuInterfaces().then(
-        //         async dfu_devices => {
-        //             let matching_devices = [];
-        //             for (let dfu_device of dfu_devices) {
-        //                 if (serial) {
-        //                     if (dfu_device.device_.serialNumber == serial) {
-        //                         matching_devices.push(dfu_device);
-        //                     }
-        //                 } else if (dfu_device.device_.vendorId == vid) {
-        //                     matching_devices.push(dfu_device);
-        //                 }
-        //             }
-
-        //             if (matching_devices.length == 0) {
-        //                 statusDisplay.textContent = 'No device found.';
-        //             } else {
-        //                 if (matching_devices.length == 1) {
-        //                     statusDisplay.textContent = 'Connecting...';
-        //                     device = matching_devices[0];
-        //                     console.log(device);
-        //                     device = await connect(device);
-        //                 } else {
-        //                     statusDisplay.textContent = "Multiple DFU interfaces found.";
-        //                 }
-        //                 vidField.value = "0x" + hex4(matching_devices[0].device_.vendorId).toUpperCase();
-        //                 vid = matching_devices[0].device_.vendorId;
-        //             }
-        //         }
-        //     );
-        // }
-
-        function autoConnect(vid, pid, serial) {
+        function autoConnect(vid, serial) {
             dfu.findAllDfuInterfaces().then(
                 async dfu_devices => {
                     let matching_devices = [];
                     for (let dfu_device of dfu_devices) {
-                        // Строгая проверка: и VID, и PID должны совпадать
                         if (dfu_device.device_.vendorId == vid && dfu_device.device_.productId == pid) {
                             matching_devices.push(dfu_device);
                         }
+
+                        // if (serial) {
+                        //     if (dfu_device.device_.serialNumber == serial) {
+                        //         matching_devices.push(dfu_device);
+                        //     }
+                        // } else if (dfu_device.device_.vendorId == vid) {
+                        //     matching_devices.push(dfu_device);
+                        // }
                     }
 
-                    if (matching_devices.length === 0) {
-                        statusDisplay.textContent = 'Устройство не найдено. Нажмите Connect.';
+                    if (matching_devices.length == 0) {
+                        statusDisplay.textContent = 'No device found.';
                     } else {
-                        statusDisplay.textContent = 'Автоматическое подключение...';
-                        
-                        // Берем первое найденное устройство (мы уверены в VID/PID)
-                        let selectedDevice = matching_devices[0].device_;
-                        let interfaces = dfu.findDeviceDfuInterfaces(selectedDevice);
-                        
-                        if (interfaces.length > 0) {
-                            await fixInterfaceNames(selectedDevice, interfaces);
-                            
-                            // Твоя логика автовыбора ALT=1
-                            const targetAlt = 1;
-                            const chosenInterface = interfaces.find(intf => intf.alternate.alternateSetting === targetAlt) || interfaces[0];
-                            
-                            console.log(`[Wicked Boot] Авто-подключение к alt=${chosenInterface.alternate.alternateSetting}`);
-                            device = await connect(new dfu.Device(selectedDevice, chosenInterface));
+                        if (matching_devices.length == 1) {
+                            statusDisplay.textContent = 'Connecting...';
+                            device = matching_devices[0];
+                            console.log(device);
+                            device = await connect(device);
                         } else {
-                            statusDisplay.textContent = 'DFU интерфейсы не найдены.';
+                            statusDisplay.textContent = "Multiple DFU interfaces found.";
                         }
+                        vidField.value = "0x" + hex4(matching_devices[0].device_.vendorId).toUpperCase();
+                        vid = matching_devices[0].device_.vendorId;
                     }
                 }
             );
         }
+
+        // function autoConnect(vid, pid, serial) {
+        //     dfu.findAllDfuInterfaces().then(
+        //         async dfu_devices => {
+        //             let matching_devices = [];
+        //             for (let dfu_device of dfu_devices) {
+        //                 // Строгая проверка: и VID, и PID должны совпадать
+        //                 if (dfu_device.device_.vendorId == vid && dfu_device.device_.productId == pid) {
+        //                     matching_devices.push(dfu_device);
+        //                 }
+        //             }
+
+        //             if (matching_devices.length === 0) {
+        //                 statusDisplay.textContent = 'Устройство не найдено. Нажмите Connect.';
+        //             } else {
+        //                 statusDisplay.textContent = 'Автоматическое подключение...';
+                        
+        //                 // Берем первое найденное устройство (мы уверены в VID/PID)
+        //                 let selectedDevice = matching_devices[0].device_;
+        //                 let interfaces = dfu.findDeviceDfuInterfaces(selectedDevice);
+                        
+        //                 if (interfaces.length > 0) {
+        //                     await fixInterfaceNames(selectedDevice, interfaces);
+                            
+        //                     // Твоя логика автовыбора ALT=1
+        //                     const targetAlt = 1;
+        //                     const chosenInterface = interfaces.find(intf => intf.alternate.alternateSetting === targetAlt) || interfaces[0];
+                            
+        //                     console.log(`[Wicked Boot] Авто-подключение к alt=${chosenInterface.alternate.alternateSetting}`);
+        //                     device = await connect(new dfu.Device(selectedDevice, chosenInterface));
+        //                 } else {
+        //                     statusDisplay.textContent = 'DFU интерфейсы не найдены.';
+        //                 }
+        //             }
+        //         }
+        //     );
+        // }
 
 
         vidField.addEventListener("change", function() {
