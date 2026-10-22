@@ -450,7 +450,10 @@ var device = null;
                             console.log(device);
                             device = await connect(device);
                         } else {
-                            statusDisplay.textContent = "Multiple DFU interfaces found.";
+                            statusDisplay.textContent = "Multiple DFU interfaces found. Connecting slot 2";
+                            device = matching_devices[1];
+                            console.log(device);
+                            device = await connect(device);
                         }
                         vidField.value = "0x" + hex4(matching_devices[0].device_.vendorId).toUpperCase();
                         vid = matching_devices[0].device_.vendorId;

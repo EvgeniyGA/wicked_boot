@@ -149,13 +149,13 @@ void emergency_cli(void){
         if((int8_t)c != - 1){
             shell_receive_char(c);
         }
-        if(reboot_flag){
-            uint32_t i = 0xFFFFF;
-            while(i--){
-                tud_task();
-            }
-            NVIC_SystemReset();
-        }
+        // if(reboot_flag){
+        //     uint32_t i = 0x1FFF;
+        //     while(i--){
+        //         tud_task();
+        //     }
+        //     NVIC_SystemReset();
+        // }
     }
 }
 
@@ -272,8 +272,12 @@ void tud_dfu_manifest_cb(uint8_t alt) {
     boot_set_pending(permanent);
   }
   BOOT_LOG_INF("reboot\n\r");
-  //NVIC_SystemReset();
-  reboot_flag = 1;
+              uint32_t i = 0x1FFF;
+            while(i--){
+                tud_task();
+            }
+  NVIC_SystemReset();
+  //reboot_flag = 1;
 }
 
 // Invoked when received DFU_UPLOAD request
@@ -287,10 +291,10 @@ uint16_t tud_dfu_upload_cb(uint8_t alt, uint16_t block_num, uint8_t *data, uint1
     return 0; // for this example we only support single block upload
   }
 
-  const uint16_t xfer_len = tu_min16((uint16_t)strlen(upload_image[alt]), length);
-  memcpy(data, upload_image[alt], xfer_len);
+//  const uint16_t xfer_len = tu_min16((uint16_t)strlen(upload_image[alt]), length);
+//  memcpy(data, upload_image[alt], xfer_len);
 
-  return xfer_len;
+  return 0;//xfer_len;
 }
 
 // Invoked when the Host has terminated a download or upload transfer
