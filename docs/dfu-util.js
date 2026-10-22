@@ -426,7 +426,7 @@ var device = null;
             return device;
         }
 
-        function autoConnect(vid, serial) {
+        function autoConnect(vid, pid, serial) {
             dfu.findAllDfuInterfaces().then(
                 async dfu_devices => {
                     let matching_devices = [];
