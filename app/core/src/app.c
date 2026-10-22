@@ -131,6 +131,8 @@ void setup(void){
     emergency_cli();
 }
 
+uint8_t reboot_flag = 0;
+
 void emergency_cli(void){
     char c = 0;
 
@@ -146,6 +148,9 @@ void emergency_cli(void){
         c = console_getc(0);
         if((int8_t)c != - 1){
             shell_receive_char(c);
+        }
+        if(reboot_flag){
+            NVIC_SystemReset();
         }
     }
 }
@@ -263,7 +268,8 @@ void tud_dfu_manifest_cb(uint8_t alt) {
     boot_set_pending(permanent);
   }
   BOOT_LOG_INF("reboot\n\r");
-  NVIC_SystemReset();
+  //NVIC_SystemReset();
+  reboot_flag = 1;
 }
 
 // Invoked when received DFU_UPLOAD request
