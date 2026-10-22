@@ -46,7 +46,7 @@
     <p>
       <button id="connect">Connect</button>
     </p>
-    <dialog id="interfaceDialog">
+    <dialog id="interfaceDialog" style="display: none;">
       Your device has multiple DFU interfaces. Select one from the list below:
       <form id="interfaceForm" method="dialog">
         <button id="selectInterface" type="submit">Select interface</button>
@@ -62,7 +62,7 @@
     </fieldset>
     <fieldset>
       <form id="configForm">
-        <label for="transferSize" style="display: none;"></label>>Transfer Size:</label>
+        <label for="transferSize" style="display: none;">Transfer Size:</label>
         <input type="number" name="transferSize" id="transferSize" value="1024" style="display: none;">/>
         <div id="dfuseFields" hidden="true">
           <label for="dfuseStartAddress">DfuSe Start Address:</label>
