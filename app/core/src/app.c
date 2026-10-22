@@ -150,6 +150,10 @@ void emergency_cli(void){
             shell_receive_char(c);
         }
         if(reboot_flag){
+            uint32_t i = 0xFFFFF;
+            while(i--){
+                tud_task();
+            }
             NVIC_SystemReset();
         }
     }
