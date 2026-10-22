@@ -431,17 +431,13 @@ var device = null;
                 async dfu_devices => {
                     let matching_devices = [];
                     for (let dfu_device of dfu_devices) {
-                        if (dfu_device.device_.vendorId == vid && dfu_device.device_.productId == pid) {
+                        if (serial) {
+                            if (dfu_device.device_.serialNumber == serial) {
+                                matching_devices.push(dfu_device);
+                            }
+                        } else if (dfu_device.device_.vendorId == vid && dfu_device.device_.productId == pid) {
                             matching_devices.push(dfu_device);
                         }
-
-                        // if (serial) {
-                        //     if (dfu_device.device_.serialNumber == serial) {
-                        //         matching_devices.push(dfu_device);
-                        //     }
-                        // } else if (dfu_device.device_.vendorId == vid) {
-                        //     matching_devices.push(dfu_device);
-                        // }
                     }
 
                     if (matching_devices.length == 0) {
@@ -688,7 +684,7 @@ var device = null;
             navigator.usb.addEventListener("disconnect", onUnexpectedDisconnect);
             
             const WICKED_VID = 0xCAFE;
-            const WICKED_PID = 0x400B;
+            const WICKED_PID = 0x4010;//0x400B;
             vidField.value = "0x" + hex4(WICKED_VID).toUpperCase();
             vid = WICKED_VID;
             
