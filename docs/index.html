@@ -34,7 +34,7 @@
     <p>
       <span id="status"></span>
     </p>
-    <p>
+    <p style="display: none;"></p>
       <label for="vid">Vendor ID (hex):</label>
       <input list="vendor_ids" type="text" name="vid" id="vid" maxlength="6" size="8" pattern="0x[A-Fa-f0-9]{1,4}"/>
       <datalist id="vendor_ids">
@@ -52,9 +52,9 @@
         <button id="selectInterface" type="submit">Select interface</button>
       </form>
     </dialog>
-    <p style="display: none;">
-      <div id="usbInfo" style="white-space: pre"></div>
-      <div id="dfuInfo" style="white-space: pre"></div>
+    <p>
+      <div id="usbInfo" style="white-space: pre; display: none;"></div>
+      <div id="dfuInfo" style="white-space: pre; display: none;"></div>
     </p>
     <fieldset  style="display: none;">
       <legend>Runtime mode</legend>
