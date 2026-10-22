@@ -426,37 +426,75 @@ var device = null;
             return device;
         }
 
-        function autoConnect(vid, serial) {
+        // function autoConnect(vid, serial) {
+        //     dfu.findAllDfuInterfaces().then(
+        //         async dfu_devices => {
+        //             let matching_devices = [];
+        //             for (let dfu_device of dfu_devices) {
+        //                 if (serial) {
+        //                     if (dfu_device.device_.serialNumber == serial) {
+        //                         matching_devices.push(dfu_device);
+        //                     }
+        //                 } else if (dfu_device.device_.vendorId == vid) {
+        //                     matching_devices.push(dfu_device);
+        //                 }
+        //             }
+
+        //             if (matching_devices.length == 0) {
+        //                 statusDisplay.textContent = 'No device found.';
+        //             } else {
+        //                 if (matching_devices.length == 1) {
+        //                     statusDisplay.textContent = 'Connecting...';
+        //                     device = matching_devices[0];
+        //                     console.log(device);
+        //                     device = await connect(device);
+        //                 } else {
+        //                     statusDisplay.textContent = "Multiple DFU interfaces found.";
+        //                 }
+        //                 vidField.value = "0x" + hex4(matching_devices[0].device_.vendorId).toUpperCase();
+        //                 vid = matching_devices[0].device_.vendorId;
+        //             }
+        //         }
+        //     );
+        // }
+
+        function autoConnect(vid, pid, serial) {
             dfu.findAllDfuInterfaces().then(
                 async dfu_devices => {
                     let matching_devices = [];
                     for (let dfu_device of dfu_devices) {
-                        if (serial) {
-                            if (dfu_device.device_.serialNumber == serial) {
-                                matching_devices.push(dfu_device);
-                            }
-                        } else if (dfu_device.device_.vendorId == vid) {
+                        // Строгая проверка: и VID, и PID должны совпадать
+                        if (dfu_device.device_.vendorId == vid && dfu_device.device_.productId == pid) {
                             matching_devices.push(dfu_device);
                         }
                     }
 
-                    if (matching_devices.length == 0) {
-                        statusDisplay.textContent = 'No device found.';
+                    if (matching_devices.length === 0) {
+                        statusDisplay.textContent = 'Устройство не найдено. Нажмите Connect.';
                     } else {
-                        if (matching_devices.length == 1) {
-                            statusDisplay.textContent = 'Connecting...';
-                            device = matching_devices[0];
-                            console.log(device);
-                            device = await connect(device);
+                        statusDisplay.textContent = 'Автоматическое подключение...';
+                        
+                        // Берем первое найденное устройство (мы уверены в VID/PID, так что не боимся)
+                        let selectedDevice = matching_devices[0].device_;
+                        let interfaces = dfu.findDeviceDfuInterfaces(selectedDevice);
+                        
+                        if (interfaces.length > 0) {
+                            await fixInterfaceNames(selectedDevice, interfaces);
+                            
+                            // Твоя логика автовыбора ALT=1
+                            const targetAlt = 1;
+                            const chosenInterface = interfaces.find(intf => intf.alternate.alternateSetting === targetAlt) || interfaces[0];
+                            
+                            console.log(`[Wicked Boot] Авто-подключение к alt=${chosenInterface.alternate.alternateSetting}`);
+                            device = await connect(new dfu.Device(selectedDevice, chosenInterface));
                         } else {
-                            statusDisplay.textContent = "Multiple DFU interfaces found.";
+                            statusDisplay.textContent = 'DFU интерфейсы не найдены.';
                         }
-                        vidField.value = "0x" + hex4(matching_devices[0].device_.vendorId).toUpperCase();
-                        vid = matching_devices[0].device_.vendorId;
                     }
                 }
             );
         }
+
 
         vidField.addEventListener("change", function() {
             vid = parseInt(vidField.value, 16);
@@ -646,9 +684,11 @@ var device = null;
             navigator.usb.addEventListener("disconnect", onUnexpectedDisconnect);
             
             const WICKED_VID = 0xCAFE;
+            const WICKED_PID = 0x400B;
             vidField.value = "0x" + hex4(WICKED_VID).toUpperCase();
             vid = WICKED_VID;
-            autoConnect(vid, serial);
+            autoConnect(vid, WICKED_PID, serial);
+            
         } else {
             statusDisplay.textContent = 'WebUSB not available.'
             connectButton.disabled = true;
