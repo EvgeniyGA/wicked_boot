@@ -294,8 +294,9 @@ void tud_dfu_detach_cb(void) {
   BOOT_LOG_INF("Host detach, we should probably reboot");
 }
 //--------------------------------------------------------------------+
-#define URL  "example.tinyusb.org/webusb-serial/index.html"
+//#define URL  "example.tinyusb.org/webusb-serial/index.html"
 //#define WEBUSB_URL "devanlai.github.io/webdfu/"
+#define URL  "evgeniyga.github.io/wicked_boot/"
 
 const tusb_desc_webusb_url_t desc_url = {
   .bLength         = 3 + sizeof(URL) - 1,

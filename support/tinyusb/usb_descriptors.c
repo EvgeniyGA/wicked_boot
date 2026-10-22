@@ -45,9 +45,9 @@ static const tusb_desc_device_t desc_device =
 //#if CFG_TUD_CDC
    // Use Interface Association Descriptor (IAD) for CDC
    // As required by USB Specs IAD's subclass must be common class (2) and protocol must be IAD (1)
-   .bDeviceClass    = TUSB_CLASS_MISC,
-   .bDeviceSubClass = MISC_SUBCLASS_COMMON,
-   .bDeviceProtocol = MISC_PROTOCOL_IAD,
+//   .bDeviceClass    = TUSB_CLASS_MISC,
+//   .bDeviceSubClass = MISC_SUBCLASS_COMMON,
+//   .bDeviceProtocol = MISC_PROTOCOL_IAD,
 //#else
    .bDeviceClass    = 0x00,
    .bDeviceSubClass = 0x00,
