@@ -631,15 +631,28 @@ var device = null;
         });
 
         // Check if WebUSB is available
+        // if (typeof navigator.usb !== 'undefined') {
+        //     navigator.usb.addEventListener("disconnect", onUnexpectedDisconnect);
+        //     // Try connecting automatically
+        //     if (fromLandingPage) {
+        //         autoConnect(vid, serial);
+        //     }
+        // } else {
+        //     statusDisplay.textContent = 'WebUSB not available.'
+        //     connectButton.disabled = true;
+        // }
+
         if (typeof navigator.usb !== 'undefined') {
             navigator.usb.addEventListener("disconnect", onUnexpectedDisconnect);
-            // Try connecting automatically
-            if (fromLandingPage) {
-                autoConnect(vid, serial);
-            }
+            
+            const WICKED_VID = 0xCAFE;
+            vidField.value = "0x" + hex4(WICKED_VID).toUpperCase();
+            vid = WICKED_VID;
+            autoConnect(vid, serial);
         } else {
             statusDisplay.textContent = 'WebUSB not available.'
             connectButton.disabled = true;
         }
+
     });
 })();
