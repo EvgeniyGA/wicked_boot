@@ -474,7 +474,7 @@ var device = null;
                     } else {
                         statusDisplay.textContent = 'Автоматическое подключение...';
                         
-                        // Берем первое найденное устройство (мы уверены в VID/PID, так что не боимся)
+                        // Берем первое найденное устройство (мы уверены в VID/PID)
                         let selectedDevice = matching_devices[0].device_;
                         let interfaces = dfu.findDeviceDfuInterfaces(selectedDevice);
                         
@@ -687,8 +687,8 @@ var device = null;
             const WICKED_PID = 0x400B;
             vidField.value = "0x" + hex4(WICKED_VID).toUpperCase();
             vid = WICKED_VID;
-            autoConnect(vid, WICKED_PID, serial);
             
+            autoConnect(vid, WICKED_PID, serial);
         } else {
             statusDisplay.textContent = 'WebUSB not available.'
             connectButton.disabled = true;
