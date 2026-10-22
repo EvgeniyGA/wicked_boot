@@ -232,6 +232,7 @@ var device = null;
         let searchParams = new URLSearchParams(window.location.search);
         let fromLandingPage = false;
         let vid = 0;
+        let pid = 0;
         // Set the vendor ID from the landing page URL
         if (searchParams.has("vid")) {
             const vidString = searchParams.get("vid");
