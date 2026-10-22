@@ -435,7 +435,7 @@ var device = null;
                             if (dfu_device.device_.serialNumber == serial) {
                                 matching_devices.push(dfu_device);
                             }
-                        } else if ((dfu_device.device_.vendorId == vid) && (dfu_device.device_.productId == pid)) {
+                        } else if (dfu_device.device_.vendorId == vid /*&& dfu_device.device_.productId == pid*/) {
                             matching_devices.push(dfu_device);
                         }
                     }
