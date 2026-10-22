@@ -684,7 +684,7 @@ var device = null;
             navigator.usb.addEventListener("disconnect", onUnexpectedDisconnect);
             
             const WICKED_VID = 0xCAFE;
-            const WICKED_PID = 0x400B;
+            const WICKED_PID = 0x4010;//0x400B;
             vidField.value = "0x" + hex4(WICKED_VID).toUpperCase();
             vid = WICKED_VID;
             
