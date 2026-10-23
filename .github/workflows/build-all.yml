@@ -43,7 +43,7 @@ jobs:
             
             # Копируем артефакты в отдельную папку, чтобы не затёрлись
             mkdir -p artifacts/$preset
-            cp -r build/* artifacts/$preset/ 2>/dev/null || true
+            cp -r build/$preset/* artifacts/$preset/ 2>/dev/null || true
           done
 
       - name: Upload stm32f4-release artifacts
