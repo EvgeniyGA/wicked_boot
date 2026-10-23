@@ -8,8 +8,6 @@
 
 #include "bootutil/bootutil.h"
 
-#include "stm32f4xx.h"
-
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 
 bool kv_store_write(const char *key, const void *val, uint32_t len) {
