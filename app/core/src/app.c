@@ -24,12 +24,6 @@
 
 #include "tusb.h"
 
-//--------------------------------------------------------------------+
-// MACRO CONSTANT TYPEDEF PROTYPES
-//--------------------------------------------------------------------+
-const char *upload_image[2] = {"Hello world from TinyUSB DFU! - Partition 0",
-                               "Hello world from TinyUSB DFU! - Partition 1"};
-
 /* Blink pattern
  * - 250 ms  : device not mounted
  * - 1000 ms : device mounted
@@ -291,10 +285,7 @@ uint16_t tud_dfu_upload_cb(uint8_t alt, uint16_t block_num, uint8_t *data, uint1
     return 0; // for this example we only support single block upload
   }
 
-//  const uint16_t xfer_len = tu_min16((uint16_t)strlen(upload_image[alt]), length);
-//  memcpy(data, upload_image[alt], xfer_len);
-
-  return 0;//xfer_len;
+  return 0;
 }
 
 // Invoked when the Host has terminated a download or upload transfer
