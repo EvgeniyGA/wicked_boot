@@ -32,7 +32,7 @@ jobs:
 
       - name: Build all configurations
         run: |
-          for preset in qemu-f4 stm32f4-debug stm32f7-debug stm32f4-release stm32f7-release; do
+          for preset in qemu-f4 stm32f4-debug stm32f4-release; do
             echo "=========================================="
             echo "Building preset: $preset"
             echo "=========================================="
@@ -58,25 +58,12 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
 
-      - name: Upload stm32f7-release artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: firmware-stm32f7-release-v${{ steps.version.outputs.version }}
-          path: |
-            artifacts/stm32f7-release/*.elf
-            artifacts/stm32f7-release/*.hex
-            artifacts/stm32f7-release/*.bin
-            artifacts/stm32f7-release/*.map
-          retention-days: 30
-          if-no-files-found: warn
-
       - name: Upload debug map files
         uses: actions/upload-artifact@v4
         with:
           name: debug-maps-v${{ steps.version.outputs.version }}
           path: |
             artifacts/stm32f4-debug/*.map
-            artifacts/stm32f7-debug/*.map
           retention-days: 14
           if-no-files-found: warn
 
@@ -107,7 +94,7 @@ jobs:
         run: |
           mkdir -p release-files
           # Переименовываем файлы, добавляя версию
-          for fw in stm32f4-release stm32f7-release; do
+          for fw in stm32f4-release; do
             if [ -d "artifacts/firmware-${fw}-v${{ steps.version.outputs.version }}" ]; then
               cd "artifacts/firmware-${fw}-v${{ steps.version.outputs.version }}"
               for file in *.elf *.hex *.bin; do
