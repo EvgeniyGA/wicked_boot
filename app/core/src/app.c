@@ -10,8 +10,8 @@
 #include "bootutil/bootutil.h"
 #include "bootutil/image.h"
 #include "bootutil/bootutil_log.h"
-#include "boot_hal.h"
 #include "Driver_Usart.h"
+#include "boot_hal.h"
 
 #include "flash_map_backend/flash_map_backend.h"
 
