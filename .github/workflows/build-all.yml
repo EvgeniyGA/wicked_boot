@@ -41,7 +41,6 @@ jobs:
             docker compose run --rm stm32-dev cmake --preset $preset
             docker compose run --rm stm32-dev cmake --build --preset $preset
             
-            # Копируем артефакты в отдельную папку, чтобы не затёрлись
             mkdir -p artifacts/$preset
             cp -r build/$preset/* artifacts/$preset/ 2>/dev/null || true
           done
