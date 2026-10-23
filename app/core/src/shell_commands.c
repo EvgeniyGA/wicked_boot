@@ -41,7 +41,7 @@ int cli_cmd_hello(int argc, char *argv[]) {
 }
 
 static void prv_reboot(void) {
-  NVIC_SystemReset();
+  //NVIC_SystemReset();
 }
 
 static int prv_reboot_cli(int argc, char *argv[]) {
