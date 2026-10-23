@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/core/inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/shell/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/shell/Include
 )
 
 target_sources(${PROJECT_NAME} PRIVATE
