@@ -37,4 +37,5 @@ target_link_libraries(bsp_drivers PUBLIC
 
 target_include_directories(bsp_drivers PUBLIC 
     ${TARGET}/Core/Inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/targets/${TARGET}/Core/Inc
 )
