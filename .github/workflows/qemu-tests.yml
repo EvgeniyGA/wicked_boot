@@ -1,0 +1,48 @@
+name: QEMU Tests
+
+on:
+  push:
+    branches: [ '**' ]  # Запускать на ВСЕХ ветках
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build Docker environment
+        run: docker compose build stm32-dev
+
+      - name: Clean build for qemu-f4
+        run: |
+          docker compose run --rm stm32-dev rm -rf build
+
+      - name: Configure CMake (qemu-f4)
+        run: |
+          docker compose run --rm stm32-dev cmake --preset qemu-f4
+
+      - name: Build firmware (qemu-f4)
+        run: |
+          docker compose run --rm stm32-dev cmake --build --preset qemu-f4
+
+      - name: Run pytest in Docker
+        run: |
+          docker compose run --rm stm32-dev pytest \
+            --junitxml=build/test-results.xml \
+            -v
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qemu-test-results-${{ github.run_id }}
+          path: |
+            build/test-results.xml
+            build/qemu_serial.txt
+          retention-days: 7

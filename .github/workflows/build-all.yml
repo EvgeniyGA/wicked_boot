@@ -1,0 +1,134 @@
+name: Build All Configurations
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  # Ручной запуск из вкладки Actions
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      # Читаем версию из файла VERSION
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Firmware version: $VERSION"
+
+      - name: Build Docker environment
+        run: docker compose build stm32-dev
+
+      - name: Build all configurations
+        run: |
+          for preset in qemu-f4 stm32f4-debug stm32f7-debug stm32f4-release stm32f7-release; do
+            echo "=========================================="
+            echo "Building preset: $preset"
+            echo "=========================================="
+            
+            docker compose run --rm stm32-dev rm -rf build
+            docker compose run --rm stm32-dev cmake --preset $preset
+            docker compose run --rm stm32-dev cmake --build --preset $preset
+            
+            # Копируем артефакты в отдельную папку, чтобы не затёрлись
+            mkdir -p artifacts/$preset
+            cp -r build/* artifacts/$preset/ 2>/dev/null || true
+          done
+
+      - name: Upload stm32f4-release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-stm32f4-release-v${{ steps.version.outputs.version }}
+          path: |
+            artifacts/stm32f4-release/*.elf
+            artifacts/stm32f4-release/*.hex
+            artifacts/stm32f4-release/*.bin
+            artifacts/stm32f4-release/*.map
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload stm32f7-release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-stm32f7-release-v${{ steps.version.outputs.version }}
+          path: |
+            artifacts/stm32f7-release/*.elf
+            artifacts/stm32f7-release/*.hex
+            artifacts/stm32f7-release/*.bin
+            artifacts/stm32f7-release/*.map
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload debug map files
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-maps-v${{ steps.version.outputs.version }}
+          path: |
+            artifacts/stm32f4-debug/*.map
+            artifacts/stm32f7-debug/*.map
+          retention-days: 14
+          if-no-files-found: warn
+
+  # === Создание GitHub Release при пуше тега ===
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release-files
+          # Переименовываем файлы, добавляя версию
+          for fw in stm32f4-release stm32f7-release; do
+            if [ -d "artifacts/firmware-${fw}-v${{ steps.version.outputs.version }}" ]; then
+              cd "artifacts/firmware-${fw}-v${{ steps.version.outputs.version }}"
+              for file in *.elf *.hex *.bin; do
+                if [ -f "$file" ]; then
+                  base="${file%.*}"
+                  ext="${file##*.}"
+                  cp "$file" "../../release-files/${base}-v${{ steps.version.outputs.version }}.${ext}"
+                fi
+              done
+              cd - > /dev/null
+            fi
+          done
+          ls -la release-files/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release v${{ steps.version.outputs.version }}
+          files: |
+            release-files/*
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
