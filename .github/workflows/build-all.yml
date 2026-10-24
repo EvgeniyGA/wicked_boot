@@ -15,7 +15,6 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
-      # Читаем версию из файла VERSION
       - name: Read version
         id: version
         run: |
@@ -62,7 +61,6 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
 
-  # === Создание GitHub Release при пуше тега ===
   release:
     needs: build
     if: github.ref_type == 'tag'
@@ -88,7 +86,7 @@ jobs:
       - name: Prepare release files
         run: |
           mkdir -p release-files
-          # Переименовываем файлы, добавляя версию
+
           for fw in stm32f4-release; do
             if [ -d "artifacts/firmware-${fw}-v${{ steps.version.outputs.version }}" ]; then
               cd "artifacts/firmware-${fw}-v${{ steps.version.outputs.version }}"
