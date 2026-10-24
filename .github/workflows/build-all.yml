@@ -80,36 +80,17 @@ jobs:
           VERSION=$(cat VERSION | tr -d '[:space:]')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Download all artifacts
+      - name: Download all release artifacts
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
-
-      - name: Prepare release files
-        run: |
-          mkdir -p release-files
-          # Переименовываем файлы, добавляя версию
-          for fw in stm32f4-release; do
-            if [ -d "artifacts/firmware-${fw}-v${{ steps.version.outputs.version }}" ]; then
-              cd "artifacts/firmware-${fw}-v${{ steps.version.outputs.version }}"
-              for file in *.elf *.hex *.bin; do
-                if [ -f "$file" ]; then
-                  base="${file%.*}"
-                  ext="${file##*.}"
-                  cp "$file" "../../release-files/${base}-v${{ steps.version.outputs.version }}.${ext}"
-                fi
-              done
-              cd - > /dev/null
-            fi
-          done
-          ls -la release-files/
+          path: release-files
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Release v${{ steps.version.outputs.version }}
           files: |
-            release-files/*
+            release-files/**/*
           generate_release_notes: true
           fail_on_unmatched_files: false
         env:
