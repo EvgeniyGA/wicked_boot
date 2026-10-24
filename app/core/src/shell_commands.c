@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include "bootutil/bootutil.h"
+#include "boot_hal.h"
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -41,7 +42,7 @@ int cli_cmd_hello(int argc, char *argv[]) {
 }
 
 static void prv_reboot(void) {
-  //NVIC_SystemReset();
+  boot_platform_reset();
 }
 
 static int prv_reboot_cli(int argc, char *argv[]) {

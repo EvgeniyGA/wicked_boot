@@ -4,6 +4,10 @@
 #include "stm32f4xx_hal.h"
 #include <stdint.h>
 
+void boot_platform_reset(void){
+    NVIC_SystemReset();
+}
+
 void boot_platform_quit(struct boot_arm_vector_table *vt)
 {
     __disable_irq();

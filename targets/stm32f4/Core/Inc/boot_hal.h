@@ -81,6 +81,8 @@ __NO_RETURN void boot_platform_quit(struct boot_arm_vector_table *vt);
  */
 __NO_RETURN void boot_platform_noimage(void);
 
+__NO_RETURN void boot_platform_reset(void);
+
 #ifdef __cplusplus
 }
 #endif
