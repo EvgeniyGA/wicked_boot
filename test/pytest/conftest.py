@@ -19,7 +19,7 @@ def fw_image(request):
 class QemuBoard:
     def __init__(self, fw_image):
         self.fw_image = fw_image
-        self.serial_file = "/tmp/qemu_serial.txt"
+        self.serial_file = "build/qemu_serial.txt"
         self.start_qemu()
     
     def start_qemu(self):
