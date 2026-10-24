@@ -35,7 +35,7 @@ jobs:
         run: |
           docker compose run --rm stm32-dev pytest \
             --junitxml=build/test-results.xml \
-            -v
+            -v -s
 
       - name: Upload test results
         if: always()
