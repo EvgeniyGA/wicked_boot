@@ -91,7 +91,7 @@ jobs:
           # Проходим по всем скачанным папкам артефактов автоматически
           for dir in downloaded-artifacts/*; do
             # Извлекаем имя платформы из имени папки
-            # Было: firmware-stm32f4-release-v0.0.2 -> Стало: stm32f4
+            # Было: firmware-stm32f4-release-v0.0.2 -> Стало: stm32f4 
             dirname=$(basename "$dir")
             platform=$(echo "$dirname" | sed -E 's/firmware-(.*)-release-v.*/\1/')
             
