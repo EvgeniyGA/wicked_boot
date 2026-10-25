@@ -78,44 +78,47 @@ jobs:
           VERSION=$(cat VERSION | tr -d '[:space:]')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Upload stm32f4-release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-stm32f4-release-${{ github.ref_name }}  # Было: v${{ steps.version.outputs.version }}
+          path: |
+            artifacts/stm32f4-release/*.elf
+            artifacts/stm32f4-release/*.hex
+            artifacts/stm32f4-release/*.bin
+            artifacts/stm32f4-release/*.map
+          retention-days: 30
+          if-no-files-found: warn
+
       - name: Download all release artifacts
         uses: actions/download-artifact@v4
         with:
           path: downloaded-artifacts
 
-            - name: Prepare release archives
+      - name: Prepare release archives
         run: |
           mkdir -p release-files
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ github.ref_name }}"  # Было: ${{ steps.version.outputs.version }}
           
-          # Проходим по всем скачанным папкам артефактов автоматически
           for dir in downloaded-artifacts/*; do
-            # Извлекаем имя платформы из имени папки
-            # Было: firmware-stm32f4-release-v0.0.2 -> Стало: stm32f4 
             dirname=$(basename "$dir")
-            platform=$(echo "$dirname" | sed -E 's/firmware-(.*)-release-v.*/\1/')
+            platform=$(echo "$dirname" | sed -E "s/firmware-(.*)-release-${VERSION}/\1/")
             
             echo "Обрабатываем платформу: $platform"
-            
-            # Создаем временную папку для этой платформы
             mkdir -p "release-files/$platform"
             
-            # Копируем и переименовываем файлы внутри папки
             for file in "$dir"/*; do
               if [ -f "$file" ]; then
                 filename=$(basename "$file")
                 name="${filename%.*}"
                 ext="${filename##*.}"
-                
-                # Формируем имя: stm32f4_wicked_boot-v0.0.2.bin
-                new_name="${platform}_${name}-v${VERSION}.${ext}"
+                new_name="${platform}_${name}-${VERSION}.${ext}"
                 cp "$file" "release-files/$platform/$new_name"
               fi
             done
             
-            # Упаковываем папку платформы в ZIP-архив
             cd release-files
-            zip -r "wicked_boot_${platform}_v${VERSION}.zip" "$platform"
+            zip -r "wicked_boot_${platform}_${VERSION}.zip" "$platform"
             cd ..
           done
           
@@ -125,7 +128,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Release v${{ steps.version.outputs.version }}
+          name: Release ${{ github.ref_name }}  # Было: v${{ steps.version.outputs.version }}
           files: |
             release-files/*.zip
           generate_release_notes: true
