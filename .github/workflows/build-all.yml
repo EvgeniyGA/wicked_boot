@@ -15,13 +15,6 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
-      - name: Read version
-        id: version
-        run: |
-          VERSION=$(cat VERSION | tr -d '[:space:]')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Firmware version: $VERSION"
-
       - name: Build Docker environment
         run: docker compose build stm32-dev
 
@@ -43,22 +36,13 @@ jobs:
       - name: Upload stm32f4-release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-stm32f4-release-v${{ steps.version.outputs.version }}
+          name: firmware-stm32f4-release-${{ github.ref_name }}
           path: |
             artifacts/stm32f4-release/*.elf
             artifacts/stm32f4-release/*.hex
             artifacts/stm32f4-release/*.bin
             artifacts/stm32f4-release/*.map
           retention-days: 30
-          if-no-files-found: warn
-
-      - name: Upload debug map files
-        uses: actions/upload-artifact@v4
-        with:
-          name: debug-maps-v${{ steps.version.outputs.version }}
-          path: |
-            artifacts/stm32f4-debug/*.map
-          retention-days: 14
           if-no-files-found: warn
 
   release:
@@ -72,16 +56,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Read version
-        id: version
-        run: |
-          VERSION=$(cat VERSION | tr -d '[:space:]')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Upload stm32f4-release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-stm32f4-release-${{ github.ref_name }}  # Было: v${{ steps.version.outputs.version }}
+          name: firmware-stm32f4-release-${{ github.ref_name }}
           path: |
             artifacts/stm32f4-release/*.elf
             artifacts/stm32f4-release/*.hex
@@ -98,7 +76,7 @@ jobs:
       - name: Prepare release archives
         run: |
           mkdir -p release-files
-          VERSION="${{ github.ref_name }}"  # Было: ${{ steps.version.outputs.version }}
+          VERSION="${{ github.ref_name }}"
           
           for dir in downloaded-artifacts/*; do
             dirname=$(basename "$dir")
@@ -128,7 +106,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Release ${{ github.ref_name }}  # Было: v${{ steps.version.outputs.version }}
+          name: Release ${{ github.ref_name }} 
           files: |
             release-files/*.zip
           generate_release_notes: true
