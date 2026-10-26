@@ -21,10 +21,7 @@ jobs:
       - name: Build all configurations
         run: |
           for preset in qemu-f4 stm32f4-debug stm32f4-release; do
-            echo "=========================================="
             echo "Building preset: $preset"
-            echo "=========================================="
-            
             docker compose run --rm stm32-dev rm -rf build
             docker compose run --rm stm32-dev cmake --preset $preset
             docker compose run --rm stm32-dev cmake --build --preset $preset
@@ -33,22 +30,13 @@ jobs:
             cp -r build/$preset/* artifacts/$preset/ 2>/dev/null || true
           done
 
-      - name: Upload stm32f4-release artifacts
+      - name: Upload all artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-stm32f4-release-${{ github.ref_name }}
+          name: firmware-all-${{ github.ref_name }}
           path: |
             artifacts/stm32f4-release/*.elf
-            artifacts/stm32f4-release/*.hex
             artifacts/stm32f4-release/*.bin
-            artifacts/stm32f4-release/*.map
-          retention-days: 30
-          if-no-files-found: warn
-      - name: Upload qemu-f4 artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: firmware-qemu-f4-${{ github.ref_name }}
-          path: |
             artifacts/qemu-f4/*.elf
             artifacts/qemu-f4/*.bin
           retention-days: 30
@@ -74,15 +62,9 @@ jobs:
         run: |
           mkdir -p release-files
           VERSION="${{ github.ref_name }}"
-          
-          echo "Упаковываем все платформы в один архив..."
           cd downloaded-artifacts
           zip -r "../release-files/wicked_boot_${VERSION}.zip" *
-          cd ..
           
-          echo "Готовый архив:"
-          ls -la release-files/
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
