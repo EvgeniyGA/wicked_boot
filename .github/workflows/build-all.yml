@@ -44,6 +44,15 @@ jobs:
             artifacts/stm32f4-release/*.map
           retention-days: 30
           if-no-files-found: warn
+      - name: Upload qemu-f4 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-qemu-f4-${{ github.ref_name }}
+          path: |
+            artifacts/qemu-f4/*.elf
+            artifacts/qemu-f4/*.bin
+          retention-days: 30
+          if-no-files-found: warn
 
   release:
     needs: build
@@ -66,30 +75,13 @@ jobs:
           mkdir -p release-files
           VERSION="${{ github.ref_name }}"
           
-          for dir in downloaded-artifacts/*; do
-            dirname=$(basename "$dir")
-            platform=$(echo "$dirname" | sed -E "s/firmware-(.*)-release-${VERSION}/\1/")
-            
-            echo "Обрабатываем платформу: $platform"
-            mkdir -p "release-files/$platform"
-            
-            for file in "$dir"/*; do
-              if [ -f "$file" ]; then
-                filename=$(basename "$file")
-                name="${filename%.*}"
-                ext="${filename##*.}"
-                new_name="${platform}_${name}-${VERSION}.${ext}"
-                cp "$file" "release-files/$platform/$new_name"
-              fi
-            done
-            
-            cd release-files
-            zip -r "wicked_boot_${platform}_${VERSION}.zip" "$platform"
-            cd ..
-          done
+          echo "Упаковываем все платформы в один архив..."
+          cd downloaded-artifacts
+          zip -r "../release-files/wicked_boot_${VERSION}.zip" *
+          cd ..
           
-          echo "Готовые архивы для релиза:"
-          ls -la release-files/*.zip
+          echo "Готовый архив:"
+          ls -la release-files/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
