@@ -22,7 +22,6 @@ jobs:
         run: |
           for preset in qemu-f4 stm32f4-debug stm32f4-release; do
             echo "Building preset: $preset"
-            docker compose run --rm stm32-dev rm -rf build
             docker compose run --rm stm32-dev cmake --preset $preset
             docker compose run --rm stm32-dev cmake --build --preset $preset
             
@@ -50,9 +49,6 @@ jobs:
       contents: write
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Download all release artifacts
         uses: actions/download-artifact@v4
         with:
