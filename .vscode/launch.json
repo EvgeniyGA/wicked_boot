@@ -3,46 +3,39 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
+    "inputs": [
+        {
+            "id": "mcuFamily",
+            "type": "pickString",
+            "description": "Выберите семейство MCU",
+            "options": [
+                "STM32F407VG",
+                "STM32F7"
+            ],
+            "default": "STM32F407VG"
+        }
+    ],
     "configurations": [
         {
-            "name" : "Debug F4 (gdb/jlink)",
-            "cwd" : "${workspaceRoot}",
-            "executable": "${command:cmake.launchTargetPath}",     
-            "interface": "swd",
-            "request" : "launch",
-            "type" : "cortex-debug",
-            "servertype" : "jlink",
-            "device": "STM32F407VG",
-            "preRestartCommands" : [ "load", "enable breakpoint", "monitor reset" ],        
-            "runToEntryPoint" : "main",        
-            "svdFile": "${workspaceFolder}/targets/stm32f4/STM32F407.svd",
-            "liveWatch": { "enabled": true, "samplesPerSecond": 2 },
-            "rttConfig":
-            {
-                "enabled": true,
-                "address": "auto",
-                "decoders": [ { "label": "RTT F4", "port": 0, "type": "console" } ]
-            }
-        },
-        {
-            "name": "Attach F4 (gdb/jlink)",
+            "name": "Debug (J-Link)",
             "cwd": "${workspaceRoot}",
-            "executable": "${command:cmake.launchTargetPath}",     
-            "interface": "swd",
-            "request": "attach", 
+            "executable": "${command:cmake.launchTargetPath}",
+            "request": "launch",//attach
             "type": "cortex-debug",
             "servertype": "jlink",
-            "device": "STM32F407VG",
             
-            "preRestartCommands": [ "enable breakpoint", "monitor reset" ],        
-            
-            "runToEntryPoint": "main",        
-            "svdFile": "${workspaceFolder}/targets/stm32f4/STM32F407.svd",
+            "interface": "swd",
+            "device": "${input:mcuFamily}",
+            "preRestartCommands": [ "load", "enable breakpoint", "monitor reset" ],
+            "runToEntryPoint": "main",
             "liveWatch": { "enabled": true, "samplesPerSecond": 2 },
+            
+            "svdFile": "${workspaceFolder}/targets/${input:mcuFamily}/${input:mcuFamily}.svd",
+            
             "rttConfig": {
                 "enabled": true,
                 "address": "auto",
-                "decoders": [ { "label": "RTT F4", "port": 0, "type": "console" } ]
+                "decoders": [ { "label": "RTT ${input:mcuFamily}", "port": 0, "type": "console" } ]
             }
         },
         {
@@ -56,7 +49,7 @@
             "device": "STM32F407VG",        
             "runToEntryPoint" : "main",
             //"showDevDebugOutput" : "raw",
-            "svdFile": "${workspaceFolder}/targets/stm32f4/STM32F407.svd",
+            "svdFile": "${workspaceFolder}/targets/stm32f4/STM32F407VG.svd",
             //"preLaunchTask": "Run qemu-arm (gdb)",
             "liveWatch": { "enabled": false, "samplesPerSecond": 2 },
         }
