@@ -15,5 +15,11 @@ services:
       dockerfile: Dockerfile.stm32-dev
     volumes:
       - .:/home/dev
+    ports:
+      - "2331:2331"
+      - "19021:19021"
     image: stm32-dev
     working_dir: /home/dev
+    tty: true
+    stdin_open: true
+    # command: ["sleep", "infinity"]  # ⬅️ Держит контейнер живым
