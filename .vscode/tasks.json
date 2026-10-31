@@ -146,5 +146,50 @@
 				}
 			}
 		},
+		{
+			"label": "🚀 Start J-Link Server (Remote Windows)",
+			"type": "shell",
+			"command": "ssh",
+			"args": [
+				"${config:remoteJLinkUser}@${config:remoteJLinkHost}",
+				"JLinkGDBServerCLExe",
+				"-device", "${input:targetDevice}",
+				"-if", "SWD",
+				"-speed", "4000",
+				"-nosinglerun",
+				"-noLocalhostOnly",
+				"-rtttelnetport", "${config:remoteRttPort}"
+			],
+			"problemMatcher": [],
+			"isBackground": true,
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"showReuseMessage": false,
+				"clear": true
+			},
+			"detail": "Запускает JLinkGDBServer на удалённой Windows (сервер живёт, пока открыт терминал)"
+		},
+		{
+			"label": "📡 Listen console",
+			"type": "shell",
+			"command": "minicom",
+			"args": [
+				"-D",
+				"tcp:${config:remoteJLinkHost}:${config:remoteRttPort}"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [],
+			"isBackground": true,
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"showReuseMessage": false,
+				"clear": true
+			},
+			"detail": "Listen console",
+		}
 	]
 }

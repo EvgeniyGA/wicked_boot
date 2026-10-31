@@ -39,6 +39,38 @@
             }
         },
         {
+            "name": "Debug Remote (J-Link)",
+            "cwd": "${workspaceRoot}",
+            "executable": "${command:cmake.launchTargetPath}",
+            "request": "launch",
+            "type": "cortex-debug",
+            
+            "servertype": "external",        
+            //"servertype": "jlink",
+            "gdbTarget": "${config:remoteJLinkHost}:2331", 
+            //"preLaunchTask": "🚀 Start J-Link Server (Remote Windows)", // <--- (Опционально) Автозапуск таски перед отладкой
+            
+            "interface": "swd",
+            "device": "${input:mcuFamily}",
+            "preRestartCommands": [ "load", "enable breakpoint", "monitor reset", "continue" ],
+            //"preLaunchCommands": ["monitor reset", "break do_boot"], //monitor flash erase
+            "runToEntryPoint": "",
+            "liveWatch": { "enabled": true, "samplesPerSecond": 2 },
+            
+            "svdFile": "${workspaceFolder}/targets/${input:mcuFamily}/${input:mcuFamily}.svd",
+            "rttConfig": {
+                "enabled": true,
+                "address": "auto",
+                "decoders": [
+                    {
+                        "label": "RTT ${input:mcuFamily}",
+                        "port": 0,
+                        "type": "console"
+                    }
+                ]
+            }
+        },
+        {
             "name": "Debug (qemu)",
             "cwd": "${workspaceFolder}",
             "executable": "${command:cmake.launchTargetPath}",    
@@ -55,3 +87,4 @@
         }
     ]
 }
+//apt install netcat-openbsd

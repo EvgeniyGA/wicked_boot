@@ -23,6 +23,7 @@
 #endif
 
 #include "tusb.h"
+#include "SEGGER_RTT.h"
 
 /* Blink pattern
  * - 250 ms  : device not mounted
@@ -36,6 +37,9 @@ enum {
 };
 
 void init(void){
+#ifdef PRINTF_RTT
+	SEGGER_RTT_ConfigUpBuffer( 0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM );
+#endif
 }
 
 void My_Delay(uint32_t Delay){
@@ -93,9 +97,9 @@ void setup(void){
 
     LCD_Init(&hlcd1);
 
-    msg.line = 0;
-    msg.offset = 0;
-    strcpy(msg.data, "loading");
+    msg.line = 1;
+    msg.offset = 1;
+    strcpy(msg.data, "loading..");
     LCD_SetCursor(&hlcd1, msg.line, msg.offset);
     LCD_SendString(&hlcd1, msg.data);
 #endif

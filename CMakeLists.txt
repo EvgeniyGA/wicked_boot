@@ -11,8 +11,8 @@ if(FOR_QEMU)
     add_compile_definitions(PRINTF_UART)
     add_compile_definitions(FOR_QEMU)
 else()
-    add_compile_definitions(PRINTF_UART)
-#    add_compile_definitions(PRINTF_RTT)
+#    add_compile_definitions(PRINTF_UART)
+    add_compile_definitions(PRINTF_RTT)
 endif()
 
 set(CMAKE_C_STANDARD 11)
@@ -35,12 +35,19 @@ target_compile_definitions(${MAIN_EXECUTABLE} PRIVATE
 include(cmake/version.cmake)
 generate_version_header()
 
+#if(PRINTF_RTT)
+    set(SEGGER_LIBS segger_rtt )
+#else()
+#    set(SEGGER_LIBS "")
+#endif()
+
 add_subdirectory(targets)
 add_subdirectory(modules)
 add_subdirectory(support)
 add_subdirectory(app)
 
-target_link_libraries(${MAIN_EXECUTABLE} 
+target_link_libraries(${MAIN_EXECUTABLE}
+    ${SEGGER_LIBS}
     segger_rtt         
     tinyusb_support
     app_version

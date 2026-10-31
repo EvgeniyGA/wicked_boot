@@ -11,6 +11,10 @@
     "cortex-debug.gdbPath.windows": "C:/arm/arm-none-eabi/bin/arm-none-eabi-gdb.exe",
     "cortex-debug.JLinkGDBServerPath.windows": "C:/Program Files/SEGGER/JLink_V918/JLinkGDBServerCL.exe",
     "cortex-debug.variableUseNaturalFormat": false,
+    "remoteJLinkHost": "192.168.1.42",
+    "remoteJLinkUser": "evgeny",
+    "remoteJLinkPort": 2331,
+    "remoteRttPort": 19021,
     "search.exclude": {
         "**/modules": true,
     },
