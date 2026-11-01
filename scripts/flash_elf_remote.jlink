@@ -1,0 +1,7 @@
+connect
+r
+h
+loadfile /tmp/app.elf
+r
+g
+q

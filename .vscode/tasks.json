@@ -191,6 +191,66 @@
 				"clear": true
 			},
 			"detail": "Listen remote console by running minicom",
+		},
+		{
+			"label": "⚡ Flash Remote Main",
+			"type": "shell",
+			"command": "sh",
+			"args": [
+				"-c",
+				"scp ${command:cmake.launchTargetPath} ${config:remoteJLinkUser}@${config:remoteJLinkHost}:/tmp/app.elf && scp ${workspaceFolder}/scripts/flash_elf_remote.jlink ${config:remoteJLinkUser}@${config:remoteJLinkHost}:/tmp/flash.jlink && ssh ${config:remoteJLinkUser}@${config:remoteJLinkHost} \"JLinkExe -device ${input:targetDevice} -if SWD -speed 4000 -NoGui 1 -CommandFile /tmp/flash.jlink\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "flash ELF via JLinkExe",
+			"problemMatcher": []
+		},
+		{
+			"label": "⚡ Flash Remote Slot0",
+			"type": "shell",
+			"command": "sh",
+			"args": [
+				"-c",
+				"scp ${workspaceFolder}/samples/gas-lighter-fw_signed.bin ${config:remoteJLinkUser}@${config:remoteJLinkHost}:/tmp/image0.bin && scp ${workspaceFolder}/scripts/flash_slot0_remote.jlink ${config:remoteJLinkUser}@${config:remoteJLinkHost}:/tmp/flash_slot0.jlink && ssh ${config:remoteJLinkUser}@${config:remoteJLinkHost} \"JLinkExe -device ${input:targetDevice} -if SWD -speed 4000 -NoGui 1 -CommandFile /tmp/flash_slot0.jlink\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "flash ELF via JLinkExe",
+			"problemMatcher": []
+		},
+		{
+			"label": "⚡ Flash Remote Slot1",
+			"type": "shell",
+			"command": "sh",
+			"args": [
+				"-c",
+				"scp ${workspaceFolder}/samples/gas-lighter-fw_signed-nextv.bin ${config:remoteJLinkUser}@${config:remoteJLinkHost}:/tmp/image1.bin && scp ${workspaceFolder}/scripts/flash_slot1_remote.jlink ${config:remoteJLinkUser}@${config:remoteJLinkHost}:/tmp/flash_slot1.jlink && ssh ${config:remoteJLinkUser}@${config:remoteJLinkHost} \"JLinkExe -device ${input:targetDevice} -if SWD -speed 4000 -NoGui 1 -CommandFile /tmp/flash_slot1.jlink\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "flash ELF via JLinkExe",
+			"problemMatcher": []
+		},
+		{
+			"label": "⚡ Erase Remote",
+			"type": "shell",
+			"command": "sh",
+			"args": [
+				"-c",
+				"scp ${workspaceFolder}/scripts/erase_remote.jlink ${config:remoteJLinkUser}@${config:remoteJLinkHost}:/tmp/erase_remote.jlink && ssh ${config:remoteJLinkUser}@${config:remoteJLinkHost} \"JLinkExe -device ${input:targetDevice} -if SWD -speed 4000 -NoGui 1 -CommandFile /tmp/erase.jlink\""
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "build",
+			"detail": "erase",
+			"problemMatcher": []
 		}
 	]
 }
