@@ -53,7 +53,7 @@
             "interface": "swd",
             "device": "${input:mcuFamily}",
             "preRestartCommands": [ "load", "enable breakpoint", "monitor reset", "continue" ],
-            //"preLaunchCommands": ["monitor reset", "break do_boot"], //monitor flash erase
+            "preLaunchCommands": ["monitor reset"],
             "runToEntryPoint": "",
             "liveWatch": { "enabled": true, "samplesPerSecond": 2 },
             
@@ -87,4 +87,3 @@
         }
     ]
 }
-//apt install netcat-openbsd
