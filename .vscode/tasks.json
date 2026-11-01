@@ -147,7 +147,7 @@
 			}
 		},
 		{
-			"label": "🚀 Start J-Link Server (Remote Windows)",
+			"label": "🚀 Start J-Link Server (Remote Linux)",
 			"type": "shell",
 			"command": "ssh",
 			"args": [
@@ -168,7 +168,8 @@
 				"showReuseMessage": false,
 				"clear": true
 			},
-			"detail": "Запускает JLinkGDBServer на удалённой Windows (сервер живёт, пока открыт терминал)"
+			"detail": "Starts JLinkGDBServer on remote machine (to stop juct close terminal)"
+			// to stop manually: pkill -f JLinkGDBServerCLExe
 		},
 		{
 			"label": "📡 Listen console",
@@ -189,7 +190,7 @@
 				"showReuseMessage": false,
 				"clear": true
 			},
-			"detail": "Listen console",
+			"detail": "Listen remote console by running minicom",
 		}
 	]
 }
