@@ -7,6 +7,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://github.com/EvgeniyGA/wicked_boot/blob/main/LICENSE)
 
 Modern, lightweight bootloader for STM32 microcontrollers, based on [MCUboot](https://www.mcuboot.com/). Designed for secure updates and easy remote debugging.
+This project incorporates configuration files and build scripts adapted from the official [STMicroelectronics stm32-mw-mcuboot](https://github.com/STMicroelectronics/stm32-mw-mcuboot) repository.
 
 ## ✨ Features
 - [X] Simple boot
