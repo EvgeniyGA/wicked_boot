@@ -3,21 +3,38 @@
 [![Build Status](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/build-all.yml/badge.svg)](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/build-all.yml)
 [![Tests Status](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/qemu-tests.yml/badge.svg)](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/qemu-tests.yml)
 [![Latest Release](https://img.shields.io/github/v/release/EvgeniyGA/wicked_boot?label=release)](https://github.com/EvgeniyGA/wicked_boot/releases)
-![MCUboot](https://img.shields.io/badge/MCUboot-v1.7.2-blue))
-![License](https://img.shields.io/badge/License-Apache_2.0-green.svg))
-![Build](https://img.shields.io/badge/build-passing-brightgreen))
+![MCUboot](https://img.shields.io/badge/MCUboot-v1.7.2-blue)
+![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)
 
-Modern bootloader for STM32.
-Based on mcuboot v1.7.2
+Modern, lightweight bootloader for STM32 microcontrollers, based on [MCUboot](https://www.mcuboot.com/). Designed for secure updates and easy remote debugging.
 
 todo:
 - [X] Simple boot
 - [X] USB-DFU support
 - [X] WebUSB support
 
+## 🚀 Quick Start
+1. Clone the repository:
+```bash
+git clone --recursive https://github.com/EvgeniyGA/wicked_boot.git
+cd wicked_boot
+git submodule update --init --recursive
+```
+2. Build:
+```bash
+cmake --preset=stm32f4
+cmake --build --preset=stm32f4
+```
+4. Flash the device. You can use any preferred flashing method compatible with your hardware setup (J-Link, ST-Link).
+Target binary: build/stm32f4/wicked_boot.bin
 
-<h3 align="center">STM32F407VG Flash Layout for MCUboot</h3>
+## 🛠️ Hardware
+Tested on: **STM32F407VGT6** (Waveshare Core407V)
 
+## 📚 Documentation
+For detailed MCUboot concepts, refer to the [official MCUboot design documentation](https://docs.mcuboot.com/design.html).
+
+## 🗺️ STM32F407VG Flash Layout for MCUboot
 ```mermaid
 flowchart TB
 
