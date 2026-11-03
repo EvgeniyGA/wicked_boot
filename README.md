@@ -23,7 +23,7 @@ flowchart TB
         
         subgraph BOOT["Bootloader Region (128K)"]
             B1["Sector 0 (16 KB):<br/><span style='white-space: nowrap;'>0x08000000-0x08003FFF</span>"]
-            B2["<nobr>Sector 1: 0x08004000 - 0x08007FFF; 16 KB</nobr>"]
+            B2["Sector 1 (16 KB):<br/>0x08004000&nbsp;&nbsp;0x08007FFF"]
             B3["<nobr>Sector 2: 0x08008000 - 0x0800BFFF; 16 KB</nobr>"]
             B4["<nobr>Sector 3: 0x0800C000 - 0x0800FFFF; 16 KB</nobr>"]
             B5["<nobr>Sector 4: 0x08010000 - 0x0801FFFF; 64 KB</nobr>"]
