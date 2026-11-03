@@ -49,6 +49,7 @@ flowchart TB
 			SC2["<nobr>Sector 10: 0x080C0000 - 0x080DFFFF; 128 KB</nobr>"]
 			SC3["<nobr>Sector 11: 0x080E0000 - 0x080FFFFF; 128 KB</nobr>"]
 			SC1 ~~~ SC2
+			SC2 ~~~ SC3
         end
 
         BOOT ~~~ PRIMARY
@@ -72,5 +73,5 @@ flowchart TB
     style S2 fill:#9c5a2e,stroke:#c47a4a,stroke-width:1px,color:#fff,font-size:12px
     style SC1 fill:#5a5a5a,stroke:#777,stroke-width:1px,color:#fff,font-size:12px
     style SC2 fill:#5a5a5a,stroke:#777,stroke-width:1px,color:#fff,font-size:12px
-    style SC3 fill:#5a5a5a,stroke:#777,stroke-width:0.5px,color:#fff,font-size:12px
+    style SC3 fill:#5a5a5a,stroke:#777,stroke-width:1px,color:#fff,font-size:12px
 ```
