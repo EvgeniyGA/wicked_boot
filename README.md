@@ -14,6 +14,7 @@ todo:
 
 
 ### STM32F407VG Memory layout
+<div align="left">
 ```mermaid
 flowchart TB
 
@@ -75,3 +76,4 @@ flowchart TB
     style SC2 fill:#5a5a5a,stroke:#777,stroke-width:1px,color:#fff,font-size:12px
     style SC3 fill:#5a5a5a,stroke:#777,stroke-width:1px,color:#fff,font-size:12px
 ```
+</div>
