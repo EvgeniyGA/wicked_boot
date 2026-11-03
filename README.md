@@ -23,31 +23,31 @@ flowchart TB
         
         subgraph BOOT["Bootloader Region (128K)"]
             B1["Sector 0 (16 KB):<br/><span style='white-space: nowrap;'>0x08000000-0x08003FFF</span>"]
-            B2["Sector 1 (16 KB):<br/>0x08004000&nbsp;&nbsp;0x08007FFF"]
-            B3["<nobr>Sector 2: 0x08008000 - 0x0800BFFF; 16 KB</nobr>"]
-            B4["<nobr>Sector 3: 0x0800C000 - 0x0800FFFF; 16 KB</nobr>"]
-            B5["<nobr>Sector 4: 0x08010000 - 0x0801FFFF; 64 KB</nobr>"]
+            B2["Sector 1 (16 KB):<br/><span style='white-space: nowrap;'>0x08004000-0x08007FFF</span>"]
+            B3["Sector 2 (16 KB):<br/><span style='white-space: nowrap;'>0x08008000-0x0800BFFF</span>"]
+            B4["Sector 3 (16 KB):<br/><span style='white-space: nowrap;'>0x0800C000-0x0800FFFF</span>"]
+            B5["Sector 4 (16 KB):<br/><span style='white-space: nowrap;'>0x08010000-0x0801FFFF</span>"]
             B1 ~~~ B2
             B3 ~~~ B4
 			B4 ~~~ B5
         end
         
         subgraph PRIMARY["Primary Slot (256K)"]
-			P1["<nobr>Sector 5: 0x08020000 - 0x0803FFFF; 128 KB</nobr>"]
-			P2["<nobr>Sector 6: 0x08040000 - 0x0805FFFF; 128 KB</nobr>"]
+			P1["Sector 5 (128 KB):<br/><span style='white-space: nowrap;'>0x08020000-0x0803FFFF</span>"]
+			P2["Sector 6 (128 KB):<br/><span style='white-space: nowrap;'>0x08040000-0x0805FFFF</span>"]
 			P1 ~~~ P2
         end
         
         subgraph SECONDARY["Secondary Slot (256K)"]
-			S1["<nobr>Sector 7: 0x08060000 - 0x0807FFFF; 128 KB</nobr>"]
-			S2["<nobr>Sector 8: 0x08080000 - 0x0809FFFF; 128 KB</nobr>"]
+			S1["Sector 7 (128 KB):<br/><span style='white-space: nowrap;'> 0x08060000-0x0807FFFF</span>"]
+			S2["Sector 8 (128 KB):<br/><span style='white-space: nowrap;'> 0x08080000-0x0809FFFF</span>"]
 			S1 ~~~ S2
         end
         
         subgraph SCRATCH["Storage Area (384K)"]
-            SC1["<nobr>Sector 9 : 0x080A0000 - 0x080BFFFF; 128 KB</nobr>"]
-			SC2["<nobr>Sector 10: 0x080C0000 - 0x080DFFFF; 128 KB</nobr>"]
-			SC3["<nobr>Sector 11: 0x080E0000 - 0x080FFFFF; 128 KB</nobr>"]
+            SC1["Sector 9  (128 KB):<br/><span style='white-space: nowrap;'> 0x080A0000-0x080BFFFF</span>"]
+			SC2["Sector 10 (128 KB):<br/><span style='white-space: nowrap;'> 0x080C0000-0x080DFFFF</span>"]
+			SC3["Sector 11 (128 KB):<br/><span style='white-space: nowrap;'> 0x080E0000-0x080FFFFF</span>"]
 			SC1 ~~~ SC2
 			SC2 ~~~ SC3
         end
