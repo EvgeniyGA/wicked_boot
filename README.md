@@ -29,6 +29,8 @@ flowchart TB
             B5["<nobr>Sector 4: 0x08010000 - 0x0801FFFF; 64 KB</nobr>"]
             B1 ~~~ B2
             B3 ~~~ B4
+			B3 ~~~ B5
+			B4 ~~~ B5
         end
         
         subgraph PRIMARY["Primary Slot (256K)"]
