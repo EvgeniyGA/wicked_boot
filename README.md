@@ -4,11 +4,11 @@
 [![Tests Status](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/qemu-tests.yml/badge.svg)](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/qemu-tests.yml)
 [![Latest Release](https://img.shields.io/github/v/release/EvgeniyGA/wicked_boot?label=release)](https://github.com/EvgeniyGA/wicked_boot/releases)
 ![MCUboot](https://img.shields.io/badge/MCUboot-v1.7.2-blue)
-![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)
+[![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://github.com/EvgeniyGA/wicked_boot/blob/main/LICENSE)
 
 Modern, lightweight bootloader for STM32 microcontrollers, based on [MCUboot](https://www.mcuboot.com/). Designed for secure updates and easy remote debugging.
 
-todo:
+## ✨ Features
 - [X] Simple boot
 - [X] USB-DFU support
 - [X] WebUSB support
