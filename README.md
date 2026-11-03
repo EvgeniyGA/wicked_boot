@@ -14,7 +14,6 @@ todo:
 
 
 <h3 align="center">STM32F407VG Memory layout</h3>
-
 ```mermaid
 flowchart TB
 
