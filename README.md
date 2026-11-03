@@ -13,7 +13,8 @@ todo:
 - [X] WebUSB support
 
 
-<h3 align="center">STM32F407VG Memory layout</h3>
+<h3 align="center">STM32F407VG Flash Layout for MCUboot</h3>
+
 ```mermaid
 flowchart TB
 
