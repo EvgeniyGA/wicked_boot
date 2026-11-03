@@ -14,9 +14,8 @@ todo:
 
 
 ### STM32F407VG Memory layout
-
-```mermaid
 <div align="left">
+```mermaid
 flowchart TB
 
     %%{init: {'flowchart': {'nodeSpacing': 25, 'rankSpacing': 1,'useMaxWidth': false}}}%%
