@@ -13,8 +13,7 @@ todo:
 - [X] WebUSB support
 
 
-### STM32F407VG Memory layout
-<div align="left">
+<h3 align="center">STM32F407VG Memory layout</h3>
 
 ```mermaid
 flowchart TB
@@ -77,6 +76,3 @@ flowchart TB
     style SC2 fill:#5a5a5a,stroke:#777,stroke-width:1px,color:#fff,font-size:12px
     style SC3 fill:#5a5a5a,stroke:#777,stroke-width:1px,color:#fff,font-size:12px
 ```
-
-</div>
-
