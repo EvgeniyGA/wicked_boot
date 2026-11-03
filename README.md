@@ -26,7 +26,7 @@ flowchart TB
             B2["Sector 1 (16 KB):<br/><span style='white-space: nowrap;'>0x08004000-0x08007FFF</span>"]
             B3["Sector 2 (16 KB):<br/><span style='white-space: nowrap;'>0x08008000-0x0800BFFF</span>"]
             B4["Sector 3 (16 KB):<br/><span style='white-space: nowrap;'>0x0800C000-0x0800FFFF</span>"]
-            B5["Sector 4 (16 KB):<br/><span style='white-space: nowrap;'>0x08010000-0x0801FFFF</span>"]
+            B5["Sector 4 (64 KB):<br/><span style='white-space: nowrap;'>0x08010000-0x0801FFFF</span>"]
             B1 ~~~ B2
             B3 ~~~ B4
 			B4 ~~~ B5
