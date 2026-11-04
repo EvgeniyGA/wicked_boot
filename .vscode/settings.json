@@ -14,7 +14,8 @@
     "remoteJLinkHost": "192.168.1.42",
     "remoteJLinkUser": "evgeny",
     "remoteJLinkPort": 2331,
-    "remoteRttPort": 19021,
+    "remoteRttPort": 19020,
+    "localRttPort": 19021,
     "search.exclude": {
         "**/modules": true,
     },

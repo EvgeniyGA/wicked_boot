@@ -1,5 +1,9 @@
 #include "Driver_Usart.h"
 #include "stm32f4xx.h"
+//#ifdef PRINTF_RTT
+//	#include "SEGGER_RTT.h"
+//#endif
+#include "stm32f4xx_hal_uart.h"
 
 extern UART_HandleTypeDef huart1;
 
@@ -14,9 +18,14 @@ int console_putc(char c) {
 }
 
 char console_getc(uint32_t timeout) {
-    uint8_t cr = -1;
-    while((HAL_UART_Receive(&huart1, &cr, 1, 0) != HAL_OK) && timeout){
-      timeout--;
-    }
-    return (char)cr;
+  uint8_t cr = -1;
+#ifdef PRINTF_RTT
+  while((SEGGER_RTT_Read(0, &cr, 1) != 1) && timeout)
+#elif PRINTF_UART
+  while((HAL_UART_Receive(&huart1, &cr, 1, 0) != HAL_OK) && timeout)
+#endif
+  {
+    timeout--;
+  }  
+  return (char)cr; 
 }

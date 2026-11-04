@@ -44,9 +44,7 @@
             "executable": "${command:cmake.launchTargetPath}",
             "request": "launch",
             "type": "cortex-debug",
-            
             "servertype": "external",        
-            //"servertype": "jlink",
             "gdbTarget": "${config:remoteJLinkHost}:2331", 
             //"preLaunchTask": "🚀 Start J-Link Server (Remote Windows)", // <--- (Опционально) Автозапуск таски перед отладкой
             
@@ -55,20 +53,8 @@
             "preRestartCommands": [ "load", "enable breakpoint", "monitor reset", "continue" ],
             "preLaunchCommands": ["monitor reset"],
             "runToEntryPoint": "",
-            "liveWatch": { "enabled": true, "samplesPerSecond": 2 },
             
             "svdFile": "${workspaceFolder}/targets/${input:mcuFamily}/${input:mcuFamily}.svd",
-            "rttConfig": {
-                "enabled": true,
-                "address": "auto",
-                "decoders": [
-                    {
-                        "label": "RTT ${input:mcuFamily}",
-                        "port": 0,
-                        "type": "console"
-                    }
-                ]
-            }
         },
         {
             "name": "Debug (qemu)",

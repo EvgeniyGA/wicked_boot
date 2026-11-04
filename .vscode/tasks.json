@@ -151,6 +151,8 @@
 			"type": "shell",
 			"command": "ssh",
 			"args": [
+				"-t",
+				"-L", "${config:localRttPort}:127.0.0.1:${config:remoteRttPort}",
 				"${config:remoteJLinkUser}@${config:remoteJLinkHost}",
 				"JLinkGDBServerCLExe",
 				"-device", "${input:targetDevice}",
@@ -162,34 +164,40 @@
 			],
 			"problemMatcher": [],
 			"isBackground": true,
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"showReuseMessage": false,
-				"clear": true
-			},
+			"presentation": { "reveal": "always", "panel": "dedicated", "showReuseMessage": false, "clear": true },
 			"detail": "Starts JLinkGDBServer on remote machine (to stop juct close terminal)"
 			// to stop manually: pkill -f JLinkGDBServerCLExe
 		},
 		{
-			"label": "📡 Listen console",
+			"label": "📡 Listen console rtt",
 			"type": "shell",
 			"command": "minicom",
 			"args": [
 				"-D",
-				"tcp:${config:remoteJLinkHost}:${config:remoteRttPort}"
+				"tcp:localhost:${config:localRttPort}"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": [],
 			"isBackground": true,
-			"presentation": {
-				"reveal": "always",
-				"panel": "dedicated",
-				"showReuseMessage": false,
-				"clear": true
+			"presentation": { "reveal": "always", "panel": "dedicated", "showReuseMessage": false, "clear": true },
+			"detail": "Listen remote console via SSH tunnel"
+		},
+		{
+			"label": "📡 Listen console uart",
+			"type": "shell",
+			"command": "minicom",
+			"args": [
+				"-D",
+				"tcp:${config:remoteJLinkHost}:${config:localRttPort}"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
 			},
+			"problemMatcher": [],
+			"isBackground": true,
+			"presentation": { "reveal": "always", "panel": "dedicated", "showReuseMessage": false, "clear": true },
 			"detail": "Listen remote console by running minicom",
 		},
 		{
