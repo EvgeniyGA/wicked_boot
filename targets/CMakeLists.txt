@@ -12,7 +12,7 @@ add_subdirectory(
 #------------------------------------------------------------
 if(${TARGET} STREQUAL "stm32f4")
 set(BSP_SOURCES
-#    ${TARGET}/Core/Src/gpio_driver.c
+    ${TARGET}/Core/Src/Driver_GPIO.c
     ${TARGET}/Core/Src/W25Qxx.c
     ${TARGET}/Core/Src/Driver_Flash.c
     ${TARGET}/Core/Src/Driver_Usart.c
@@ -22,7 +22,8 @@ set(BSP_SOURCES
 )
 else()
 set(BSP_SOURCES
-${TARGET}/Core/Src/W25Qxx.c
+    ${TARGET}/Core/Src/W25Qxx.c
+# todo
 )
 endif()
 
@@ -33,6 +34,7 @@ add_library(bsp_drivers STATIC
 target_link_libraries(bsp_drivers PUBLIC 
     stm32cubemx
     bootutil
+    segger_rtt
 )
 
 target_include_directories(bsp_drivers PUBLIC 

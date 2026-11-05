@@ -1,8 +1,8 @@
 #include "Driver_Usart.h"
 #include "stm32f4xx.h"
-//#ifdef PRINTF_RTT
-//	#include "SEGGER_RTT.h"
-//#endif
+#ifdef PRINTF_RTT
+	#include "SEGGER_RTT.h"
+#endif
 #include "stm32f4xx_hal_uart.h"
 
 extern UART_HandleTypeDef huart1;

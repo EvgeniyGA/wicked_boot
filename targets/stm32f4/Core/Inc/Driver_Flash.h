@@ -46,6 +46,7 @@ extern "C"
 {
 #endif
 
+#include <stm32f4xx_hal.h>
 #include "Driver_Common.h"
 
 #define ARM_FLASH_API_VERSION ARM_DRIVER_VERSION_MAJOR_MINOR(2,1)  /* API version */
@@ -203,6 +204,8 @@ typedef struct _ARM_DRIVER_FLASH {
 } const ARM_DRIVER_FLASH;
 
 extern ARM_DRIVER_FLASH Driver_FLASH0;
+
+uint32_t GetSectorFromAddress(uint32_t Address);
 
 #ifdef  __cplusplus
 }
