@@ -12,6 +12,7 @@ This project incorporates configuration files and build scripts adapted from the
 
 ## ✨ Features
 - [X] Simple boot
+- [X] Remote debugging
 - [X] USB-DFU support
 - [X] WebUSB support
 
