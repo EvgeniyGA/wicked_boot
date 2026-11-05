@@ -1,5 +1,6 @@
 # Wicked Boot
 [![forthebadge](https://forthebadge.com/images/badges/powered-by-coffee.svg)](https://forthebadge.com)
+
 [![Build Status](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/build-all.yml/badge.svg)](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/build-all.yml)
 [![Tests Status](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/qemu-tests.yml/badge.svg)](https://github.com/EvgeniyGA/wicked_boot/actions/workflows/qemu-tests.yml)
 [![Latest Release](https://img.shields.io/github/v/release/EvgeniyGA/wicked_boot?label=release)](https://github.com/EvgeniyGA/wicked_boot/releases)
